@@ -1,0 +1,218 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>批发下单 App + 后台 · 恒顺日化 · Rick 的案例</title>
+<meta name="description" content="批发客户在手机上看价下单、传付款截图；仓库在后台确认收款、备货拍照、发货；老板看每个仓、每个业务员卖了多少。">
+<meta property="og:title" content="批发下单 App + 后台案例">
+<meta property="og:description" content="批发客户在手机上看价下单、传付款截图；仓库在后台确认收款、备货拍照、发货；老板看每个仓、每个业务员卖了多少。">
+<meta property="og:image" content="poster.jpg">
+<meta name="theme-color" content="#06082f">
+<link rel="icon" href="/favicon.png">
+<link rel="preload" href="rec.mp4" as="video" type="video/mp4">
+<style>
+@font-face{font-family:'General Sans';font-weight:500;font-display:swap;src:url(/fonts/general-sans-500.woff2) format('woff2')}
+@font-face{font-family:'General Sans';font-weight:600;font-display:swap;src:url(/fonts/general-sans-600.woff2) format('woff2')}
+:root{
+  --paper:#fff;--ink:#1c1d20;--muted:#5f6368;--line:rgba(28,29,32,.12);
+  --navy:#06082f;--navy-2:#11154a;--on-navy:#f4f4f7;--on-navy-muted:#b4b6cc;
+  --font:'General Sans',-apple-system,BlinkMacSystemFont,'PingFang SC','Hiragino Sans GB','Noto Sans SC','Microsoft YaHei',sans-serif;
+  --ease:cubic-bezier(.16,1,.3,1);--gut:20px;color-scheme:light}
+*,*::before,*::after{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--paper);color:var(--ink);font:16px/1.6 var(--font);-webkit-font-smoothing:antialiased;overflow-x:hidden}
+a{color:inherit;text-decoration:none;-webkit-tap-highlight-color:transparent}
+h1,h2,h3,p,ul,figure{margin:0}ul{padding:0;list-style:none}
+img,video{display:block;max-width:100%}
+:focus-visible{outline:2px solid #3f5cf3;outline-offset:3px;border-radius:6px}
+.contact{margin-top:56px}
+.contact p.contact__lead{color:var(--muted);font-size:15px;margin-bottom:16px}
+.wx{display:flex;align-items:center;justify-content:space-between;gap:12px;max-width:420px;padding:6px 6px 6px 20px;border:1.5px solid var(--navy);border-radius:999px;font-size:17px;font-weight:500}
+.wx [data-copy-text]{-webkit-user-select:text;user-select:text}
+.wx__btn{flex:none;min-width:5em;height:44px;padding:0 18px;border:0;border-radius:999px;background:var(--navy);color:#fff;font:500 15px/1 var(--font);cursor:pointer;transition:background-color .25s}
+.wx__btn.is-copied{background:#1f8a4c}
+
+.hero{background:var(--navy);color:var(--on-navy);padding:0 var(--gut) 28px}
+.top{display:flex;align-items:center;justify-content:space-between;height:52px;font-size:14px}
+.top__brand{font-weight:600;letter-spacing:-.01em}
+.top__brand span{font-weight:500;color:var(--on-navy-muted);margin-left:6px}
+.top__nav{display:flex;gap:4px}
+.top__nav a{padding:6px 10px;border-radius:999px;color:var(--on-navy-muted)}
+.top__nav a[aria-current]{background:rgba(255,255,255,.12);color:var(--on-navy)}
+.hero__grid{display:grid;gap:18px}
+.hero h1{font-size:30px;line-height:1.15;font-weight:600;letter-spacing:-.02em;padding-top:6px}
+.hero h1 small{display:block;font-size:16px;font-weight:500;letter-spacing:0;color:var(--on-navy-muted);margin-top:6px}
+.hero__side{display:none}
+.phone{--h:clamp(380px,calc(100svh - 262px),620px);height:var(--h);width:calc((var(--h) - 16px) * 375 / 812 + 16px);
+  margin:0 auto;padding:8px;border-radius:calc(var(--h) * .068);background:#0b0b0d;
+  box-shadow:0 0 0 1.5px #2b2c33,0 28px 60px -24px rgba(0,0,0,.75);position:relative}
+.screen{height:100%;border-radius:calc(var(--h) * .058);overflow:hidden;background:#0d5c56;position:relative;
+  display:flex;flex-direction:column;container-type:inline-size}
+.sbar{flex:0 0 auto;aspect-ratio:375/44;display:flex;align-items:center;justify-content:space-between;
+  padding:0 7% 0 9%;color:#fff;font:600 14px/1 -apple-system,'SF Pro Text','PingFang SC',sans-serif;font-size:3.9cqw;position:relative}
+.sbar::after{content:'';position:absolute;left:50%;top:22%;width:30%;height:58%;margin-left:-15%;border-radius:999px;background:#000}
+.sbar svg{height:3.3cqw;width:auto;min-height:9px}
+.sbar__icons{display:flex;gap:1.4cqw;align-items:center}
+.screen video{flex:1 1 auto;width:100%;min-height:0;object-fit:cover;object-position:top;background:#f3f4f6}
+.play{position:absolute;inset:auto 0 18% 0;margin:auto;width:max-content;padding:10px 18px;border:0;border-radius:999px;
+  background:rgba(6,8,47,.82);color:#fff;font:500 15px/1 var(--font);display:flex;gap:8px;align-items:center;cursor:pointer}
+.play[hidden]{display:none}
+.hero__note{text-align:center;font-size:13px;color:var(--on-navy-muted);margin-top:12px}
+.cta{position:fixed;left:0;right:0;bottom:0;z-index:10;display:flex;gap:10px;padding:10px var(--gut) calc(10px + env(safe-area-inset-bottom));
+  background:var(--paper);box-shadow:0 -1px 0 var(--line),0 -8px 20px -14px rgba(0,0,0,.28)}
+.btn{flex:1;display:flex;align-items:center;justify-content:center;gap:6px;height:48px;border-radius:999px;font-size:16px;font-weight:500;
+  border:1.5px solid var(--navy);color:var(--navy);transition:background-color .2s,transform .2s var(--ease)}
+.btn:active{transform:scale(.97)}
+.btn--main{background:var(--navy);color:#fff;flex:1.25}
+.btn svg{width:16px;height:16px}
+main{padding:36px var(--gut) 120px;max-width:1080px;margin:0 auto}
+.lede{font-size:20px;line-height:1.55;font-weight:500;letter-spacing:-.01em;max-width:24em;text-wrap:pretty}
+.fits{margin-top:14px;color:var(--muted);font-size:15px}
+.fits b{color:var(--ink);font-weight:500}
+section{margin-top:56px}
+h2{font-size:22px;line-height:1.3;font-weight:600;letter-spacing:-.01em;margin-bottom:16px}
+.shots__head{display:flex;align-items:baseline;justify-content:space-between}
+.shots__hint{font-size:14px;color:var(--muted)}
+.strip{display:flex;gap:14px;overflow-x:auto;scroll-snap-type:x mandatory;margin:0 calc(var(--gut) * -1);padding:4px var(--gut) 14px;
+  scroll-padding:0 var(--gut);scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.strip::-webkit-scrollbar{display:none}
+.strip figure{flex:0 0 auto;width:min(62vw,250px);scroll-snap-align:start}
+.strip img{width:100%;aspect-ratio:375/812;object-fit:cover;object-position:top;border-radius:18px;background:#f1f1f3;
+  box-shadow:0 0 0 1px var(--line),0 14px 28px -18px rgba(0,0,0,.3)}
+.strip figcaption{font-size:14px;line-height:1.5;color:var(--muted);margin-top:10px;padding-right:8px}
+.strip figcaption b{display:block;color:var(--ink);font-weight:500;font-size:15px}
+.sides{display:grid;gap:40px}
+.feat li{display:grid;gap:2px;padding:13px 0;border-top:1px solid var(--line)}
+.feat li:last-child{border-bottom:1px solid var(--line)}
+.feat b{font-weight:500;font-size:16px}
+.feat span{color:var(--muted);font-size:15px}
+.side__link{display:inline-flex;align-items:center;gap:6px;margin-top:14px;font-size:15px;font-weight:500;color:var(--navy);
+  border-bottom:1.5px solid currentColor;padding-bottom:1px}
+.side__link svg{width:16px;height:16px;flex:none}
+.note p{color:var(--muted);font-size:15px;max-width:36em}
+.note p+p{margin-top:10px}
+.others{display:grid;gap:12px}
+.other{display:grid;grid-template-columns:64px 1fr auto;gap:14px;align-items:center;padding:12px;border-radius:16px;background:#f4f4f6}
+.other img{width:64px;height:84px;object-fit:cover;object-position:top;border-radius:10px}
+.other b{display:block;font-weight:500;font-size:16px;line-height:1.4}
+.other__fits{display:block;font-size:14px;color:var(--muted);margin-top:2px}
+.other svg{width:18px;height:18px;color:var(--muted)}
+footer{margin-top:56px;padding-top:20px;border-top:1px solid var(--line);font-size:13px;color:var(--muted);display:flex;flex-wrap:wrap;gap:6px 16px;justify-content:space-between}
+footer a{color:var(--ink);font-weight:500}
+@media (prefers-reduced-motion:reduce){.btn{transition:none}}
+/* 电脑，以及横屏手机 / 宽而矮的窗口：左边文字、右边手机 */
+@media (min-width:900px),(min-width:640px) and (max-height:560px) and (orientation:landscape){
+  :root{--gut:clamp(24px,6vw,96px)}
+  .hero{padding-bottom:64px}
+  .hero__grid{grid-template-columns:1fr auto;align-items:center;gap:64px;max-width:1080px;margin:0 auto;padding-top:24px}
+  .top{max-width:1080px;margin:0 auto}
+  .hero h1{font-size:52px}
+  .hero h1 small{font-size:20px;margin-top:10px}
+  .hero__side{display:block}
+  .hero__side .lede{color:var(--on-navy);margin-top:26px}
+  .hero__side .fits{color:var(--on-navy-muted)}.hero__side .fits b{color:var(--on-navy)}
+  .phone{--h:clamp(300px,calc(100vh - 110px),680px)}
+  .cta{position:static;background:none;box-shadow:none;padding:0;margin-top:32px;max-width:440px}
+  .hero .btn{border-color:var(--on-navy);color:var(--on-navy)}
+  .hero .btn--main{background:var(--on-navy);color:var(--navy)}
+  .intro,.intro-cta{display:none}
+  main{padding-bottom:80px}
+  .sides{grid-template-columns:1fr 1fr;gap:56px}
+  .others{grid-template-columns:1fr 1fr}
+  .strip{margin:0;padding:4px 0 14px}
+}
+
+.strip figure.wide{width:min(84vw,440px)}
+.strip figure.wide img{aspect-ratio:1280/800}
+.days{display:flex;gap:10px;flex-wrap:wrap;margin-top:4px}
+.days div{flex:1 1 150px;padding:14px 16px;border-radius:14px;background:#f4f4f6}
+.days b{display:block;font-size:22px;font-weight:600;letter-spacing:-.01em}
+.days span{font-size:14px;color:var(--muted)}
+.before li{padding:10px 0 10px 22px;border-top:1px solid var(--line);position:relative;font-size:15.5px}
+.before li:last-child{border-bottom:1px solid var(--line)}
+.before li::before{content:'';position:absolute;left:4px;top:19px;width:8px;height:8px;border-radius:50%;background:#c9cbd3}
+</style>
+</head>
+<body>
+<header class="hero">
+  <nav class="top" aria-label="案例"><a class="top__brand" href="https://kobe969463-creator.github.io/">Rick<span>的公司项目案例</span></a><span class="top__nav"><a href="./" aria-current="page">批发下单</a></span></nav>
+  <div class="hero__grid">
+    <div>
+      <h1>恒顺日化批发<small>批发下单 App + 电脑后台</small></h1>
+      <div class="hero__side"><p class="lede">批发客户在手机上看价下单、传付款截图；仓库在后台确认收款、备货拍照、发货；老板看每个仓、每个业务员卖了多少。</p><p class="fits"><b>适合</b>　日化、酒水饮料、粮油副食、五金建材、文具玩具这类有几个仓、给小店供货的批发公司</p><div class="cta"><a class="btn btn--main" href="app/">自己点一下试试</a><a class="btn" href="admin/">看后台</a></div></div>
+    </div>
+    <div class="hero__phone">
+    <figure class="phone" aria-label="批发下单 App 录屏">
+      <div class="screen">
+        <div class="sbar" aria-hidden="true"><span>9:41</span><span class="sbar__icons" aria-hidden="true"><svg viewBox="0 0 18 12"><rect x="0" y="8" width="3" height="4" rx=".8" fill="currentColor"/><rect x="5" y="5.5" width="3" height="6.5" rx=".8" fill="currentColor"/><rect x="10" y="3" width="3" height="9" rx=".8" fill="currentColor"/><rect x="15" y="0" width="3" height="12" rx=".8" fill="currentColor"/></svg><svg viewBox="0 0 16 12"><path d="M8 11.5 5.6 9a3.4 3.4 0 0 1 4.8 0L8 11.5Zm-4.3-4.4L2 5.3a8.5 8.5 0 0 1 12 0l-1.7 1.8a6.1 6.1 0 0 0-8.6 0Z" fill="currentColor"/></svg><svg viewBox="0 0 27 12"><rect x=".5" y=".5" width="22" height="11" rx="3.2" fill="none" stroke="currentColor" opacity=".4"/><rect x="2" y="2" width="19" height="8" rx="2" fill="currentColor"/><path d="M24.5 4v4c.8-.3 1.3-1.1 1.3-2s-.5-1.7-1.3-2Z" fill="currentColor" opacity=".45"/></svg></span></div>
+        <video id="rec" src="rec.mp4" poster="poster.jpg" autoplay muted loop playsinline webkit-playsinline x5-playsinline preload="auto" aria-label="录屏：客户下单，后台确认收款发货，客户那边状态跟着变"></video>
+        <button class="play" id="play" type="button" hidden><svg viewBox="0 0 20 20" width="14" height="14" aria-hidden="true"><path d="M6 4.2v11.6a.6.6 0 0 0 .9.5l9.3-5.8a.6.6 0 0 0 0-1L6.9 3.7a.6.6 0 0 0-.9.5Z" fill="currentColor"/></svg>播放录屏</button>
+      </div>
+    </figure>
+    <p class="hero__note">录屏 33 秒 · 客户下单 → 仓库确认收款、发货 → 客户签收</p>
+    </div>
+  </div>
+</header>
+<div class="intro-cta"><div class="cta"><a class="btn btn--main" href="app/">自己点一下试试</a><a class="btn" href="admin/">看后台</a></div></div>
+<main>
+  <div class="intro"><p class="lede">批发客户在手机上看价下单、传付款截图；仓库在后台确认收款、备货拍照、发货；老板看每个仓、每个业务员卖了多少。</p><p class="fits"><b>适合</b>　日化、酒水饮料、粮油副食、五金建材、文具玩具这类有几个仓、给小店供货的批发公司</p></div>
+  <section aria-labelledby="h-shots">
+    <div class="shots__head"><h2 id="h-shots">几个关键页面</h2><span class="shots__hint">左右滑 · 6 张</span></div>
+    <div class="strip"><figure class=""><img src="shots/01.webp" alt="进货页" loading="lazy" decoding="async"><figcaption><b>进货页</b>只看到自己那个仓有货的商品、自己那个区的价，特价、买几送一直接标在图上</figcaption></figure><figure class=""><img src="shots/02.webp" alt="进货单" loading="lazy" decoding="async"><figcaption><b>进货单</b>特价、客户固定折扣、满额送赠品，下单前自动算好</figcaption></figure><figure class=""><img src="shots/03.webp" alt="订单进度" loading="lazy" decoding="async"><figcaption><b>订单进度</b>确认收款 → 备货 → 发货 → 签收，备货照片和物流单号都看得到</figcaption></figure><figure class="wide"><img src="shots/04.webp" alt="后台 · 订单" loading="lazy" decoding="async"><figcaption><b>后台 · 订单</b>仓库员看付款截图确认收款，传备货照片、填单号发货</figcaption></figure><figure class="wide"><img src="shots/05.webp" alt="后台 · 商品库存" loading="lazy" decoding="async"><figcaption><b>后台 · 商品库存</b>3 个仓各填各的价和库存，哪个仓卖到 0 那个仓自动下架</figcaption></figure><figure class="wide"><img src="shots/06.webp" alt="后台 · 销售统计" loading="lazy" decoding="async"><figcaption><b>后台 · 销售统计</b>按天、按仓、按业务员、按商品看，提成和压货一起算</figcaption></figure></div>
+  </section>
+  <section class="note">
+    <h2>什么行业</h2>
+    <p>给小超市、便利店、酒店供货的批发公司。这个案例是日化批发：洗衣液、纸品、洗护、酒店用品，三十几样商品，杭州、苏州、合肥 3 个仓，每个仓有自己的业务员和价格。</p>
+  </section>
+  <section>
+    <h2>原来怎么干</h2>
+    <ul class="before"><li>客户在微信上发单，业务员一条条抄进表格，忙起来就漏</li><li>转账截图混在聊天记录里，仓库要问一圈才知道这单付没付</li><li>哪个仓没货了，客户下完单才发现，再打电话改单</li><li>不同区域价格不一样、老客户有折扣，每次手算</li><li>月底算业务员提成、看哪些货压着，靠翻表格</li></ul>
+  </section>
+  <section class="sides">
+    <div><h2>做了什么 · 客户 App</h2><ul class="feat"><li><b>注册要后台审核</b><span>审核时分好发货仓、专属业务员和拿货折扣，没通过看不到价</span></li><li><b>只看自己仓的货和价</b><span>杭州的客户看杭州仓有货的、杭州的价，客户不用自己选仓</span></li><li><b>优惠自动算</b><span>特价有开始结束时间，固定折扣、买几送一、满额送赠品一起算</span></li><li><b>下单传付款截图</b><span>对公转账截完图传上来，不用在聊天记录里翻</span></li><li><b>每一步都看得到</b><span>备货照片、物流单号、什么时候发的，到了点签收顺手评价</span></li><li><b>活动消息</b><span>后台发的活动推到 App 里</span></li></ul><a class="side__link" href="app/">试客户端 <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M7 4l6 6-6 6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></a></div>
+    <div><h2>做了什么 · 电脑后台</h2><ul class="feat"><li><b>三种账号</b><span>管理员看全部；业务员只看自己名下的客户和订单；仓库员只管收款、备货、发货</span></li><li><b>收款 → 备货 → 发货</b><span>看截图点确认收款，传备货照片，填单号发货，能打发货单</span></li><li><b>3 个仓各管各的库存</b><span>下单自动扣，扣到 0 该仓自动下架，补货自动上架</span></li><li><b>卖了多少、赚了多少</b><span>按天、按仓、按业务员、按商品，商品排行、毛利</span></li><li><b>业务员提成</b><span>营业额 × 比例，比例后台能改</span></li><li><b>库存天数</b><span>现有库存够卖几天，压货的排最前</span></li></ul><a class="side__link" href="admin/">进后台 <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M7 4l6 6-6 6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></a></div>
+  </section>
+  <section>
+    <h2>几天交</h2>
+    <div class="days"><div><b>3 天</b><span>出能点的演示站和安卓预览包，老板和仓库先用起来</span></div><div><b>之后</b><span>用着提的改动一批批加，退货、缺货改单、调货审批、采购进货都是后来补的</span></div></div>
+  </section>
+  <section class="note">
+    <h2>按你的公司来改</h2>
+    <p>几个仓、几种账号、价格怎么分区、优惠怎么算、要不要打单机，都按你们现在的做法来。可以做苹果、安卓 App 加电脑后台，也可以只做微信小程序。</p>
+    <p>这个页面是照真做过的一单重做的演示，公司名、商品和数据都是虚构的，随便点；客户端和后台开两个窗口一起点，能看到两边实时同步。</p>
+  </section>
+  <section class="contact" aria-labelledby="h-contact"><h2 id="h-contact">想做一个类似的</h2><p class="contact__lead">加微信，说说你们公司现在怎么接单、想要哪些功能。</p><p class="wx"><span data-copy-text>微信：<span translate="no">business_rick</span></span><button class="wx__btn" type="button" data-copy="business_rick" aria-label="复制微信号 business_rick">复制</button></p></section>
+  <footer><span>Rick · 独立开发者</span><a href="https://kobe969463-creator.github.io/">看网站、App 等其他作品 →</a></footer>
+</main>
+<script>
+(function(){
+  var v=document.getElementById('rec'),b=document.getElementById('play');
+  var reduce=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
+  function show(){b.hidden=false}
+  function go(){var p=v.play();if(p&&p.catch)p.catch(show)}
+  v.addEventListener('playing',function(){b.hidden=true});
+  b.addEventListener('click',function(){b.hidden=true;v.play()});
+  if(reduce){v.removeAttribute('autoplay');show();return}
+  go();
+  document.addEventListener('WeixinJSBridgeReady',go,false);
+  document.addEventListener('touchstart',function t(){if(v.paused)go();document.removeEventListener('touchstart',t)},{passive:true});
+  setTimeout(function(){if(v.paused)show()},2500);
+})();
+</script>
+<script>
+(function(){
+  function legacy(t){var a=document.createElement('textarea');a.value=t;a.setAttribute('readonly','');
+    a.style.cssText='position:fixed;top:0;left:0;width:1px;height:1px;opacity:0;font-size:16px';document.body.appendChild(a);
+    a.focus();a.select();a.setSelectionRange(0,t.length);var ok=false;try{ok=document.execCommand('copy')}catch(e){}a.remove();return ok}
+  function copy(t){if(navigator.clipboard&&window.isSecureContext){return navigator.clipboard.writeText(t).then(function(){return true},function(){return legacy(t)})}
+    return Promise.resolve(legacy(t))}
+  document.addEventListener('click',function(e){var b=e.target.closest&&e.target.closest('[data-copy]');if(!b)return;e.preventDefault();
+    copy(b.getAttribute('data-copy')).then(function(ok){
+      if(!ok){var n=b.parentNode.querySelector('[translate]');if(n){var r=document.createRange();r.selectNodeContents(n);var s=getSelection();s.removeAllRanges();s.addRange(r)}}
+      b.textContent=ok?'已复制':'长按选中复制';b.classList.toggle('is-copied',ok);clearTimeout(b._t);
+      b._t=setTimeout(function(){b.textContent='复制';b.classList.remove('is-copied')},2000)})})
+})();
+</script>
+</body>
+</html>

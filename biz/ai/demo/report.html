@@ -1,0 +1,210 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>销售日报 · 麦田日记烘焙</title>
+<meta name="description" content="工作流每天早上自动生成的门店销售日报（演示数据）">
+<meta name="theme-color" content="#f6f4ef">
+<link rel="icon" href="/favicon.png">
+<style>
+@font-face{font-family:'General Sans';font-weight:500;font-display:swap;src:url(/fonts/general-sans-500.woff2) format('woff2')}
+@font-face{font-family:'General Sans';font-weight:600;font-display:swap;src:url(/fonts/general-sans-600.woff2) format('woff2')}
+:root{--bg:#f6f4ef;--card:#fff;--ink:#1d1c1a;--muted:#6d6a63;--line:rgba(29,28,26,.1);
+  --brand:#b4532a;--brand-soft:#f6e6dc;--up:#1f7a4d;--down:#c0392b;--amber:#b7791f;--amber-soft:#fbf1dc;--red-soft:#fbe5e2;
+  --bar:#d8d3c8;--font:'General Sans',-apple-system,BlinkMacSystemFont,'PingFang SC','Hiragino Sans GB','Noto Sans SC','Microsoft YaHei',sans-serif;color-scheme:light}
+*,*::before,*::after{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.6 var(--font);-webkit-font-smoothing:antialiased;overflow-x:hidden}
+h1,h2,h3,p,ul{margin:0}ul{padding:0;list-style:none}
+a{color:inherit}
+.wrap{max-width:760px;margin:0 auto;padding:0 16px 40px}
+.top{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 0 6px;font-size:13px;color:var(--muted)}
+.top a{display:inline-flex;align-items:center;gap:4px;text-decoration:none;color:var(--muted)}
+.logo{display:flex;align-items:center;gap:8px;color:var(--ink);font-weight:600;font-size:14px}
+.logo i{width:24px;height:24px;border-radius:7px;background:var(--brand);display:grid;place-items:center}
+.logo i svg{width:14px;height:14px}
+h1{font-size:26px;line-height:1.25;font-weight:600;letter-spacing:-.01em;margin-top:14px}
+.sub{color:var(--muted);font-size:13px;margin-top:4px}
+.card{background:var(--card);border-radius:16px;padding:16px;margin-top:12px;box-shadow:0 1px 0 var(--line)}
+.kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:16px}
+.kpi{background:var(--card);border-radius:14px;padding:10px 12px;min-width:0;box-shadow:0 1px 0 var(--line)}
+.kpi b{display:block;font-size:12px;font-weight:500;color:var(--muted)}
+.kpi strong{display:block;font-size:20px;line-height:1.3;font-weight:600;letter-spacing:-.01em;font-variant-numeric:tabular-nums}
+.kpi span{font-size:12px;color:var(--muted)}
+.kpi--main{grid-column:1/-1;background:var(--ink);color:#fff}
+.kpi--main b,.kpi--main span{color:rgba(255,255,255,.7)}
+.kpi--main strong{font-size:34px}
+.up{color:var(--up)!important}.down{color:var(--down)!important}
+.kpi--main .up{color:#7fd8a8!important}
+h2{font-size:17px;font-weight:600;margin-bottom:10px;display:flex;align-items:baseline;justify-content:space-between;gap:10px}
+h2 small{font-size:12px;font-weight:500;color:var(--muted)}
+.ai{background:var(--brand-soft);box-shadow:none}
+.ai h2{color:var(--brand)}
+.ai ol{margin:0;padding-left:20px}
+.ai li{padding:3px 0;text-wrap:pretty}
+.ai .by{font-size:12px;color:var(--muted);margin-top:8px}
+.alerts{display:grid;gap:10px}
+.alert{border-radius:12px;padding:12px 14px;background:var(--amber-soft)}
+.alert--red{background:var(--red-soft)}
+.alert b{display:block;font-size:15px;font-weight:600}
+.alert p{font-size:14px;color:#4a4740;margin-top:2px}
+.alert em{display:inline-block;font-style:normal;font-size:13px;font-weight:500;margin-top:6px;padding:2px 10px;border-radius:999px;background:rgba(255,255,255,.7)}
+.alert svg{display:block;width:100%;height:auto;margin-top:8px}
+.legend{display:flex;gap:14px;font-size:12px;color:var(--muted);margin:-2px 0 8px}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:5px;vertical-align:-1px}
+svg text{font-family:var(--font)}
+.chart{display:block;width:100%;height:auto}
+.prod li{display:grid;grid-template-columns:5.6em 1fr auto;gap:10px;align-items:center;padding:5px 0;font-size:14px}
+.prod .bar{height:10px;border-radius:5px;background:var(--bar);position:relative;overflow:hidden}
+.prod .bar i{position:absolute;inset:0 auto 0 0;border-radius:5px;background:var(--brand)}
+.prod .num{font-variant-numeric:tabular-nums;font-size:13px;color:var(--muted);min-width:4.4em;text-align:right}
+.prod .tag{display:block;font-size:11px;line-height:1.3;color:var(--amber)}
+.tbl{width:100%;border-collapse:collapse;font-size:14px;font-variant-numeric:tabular-nums}
+.tbl th{font-size:12px;font-weight:500;color:var(--muted);text-align:right;padding:6px 4px;border-bottom:1px solid var(--line)}
+.tbl td{text-align:right;padding:9px 4px;border-bottom:1px solid var(--line)}
+.tbl th:first-child,.tbl td:first-child{text-align:left}
+.tbl tr.warn td{background:var(--red-soft)}
+.tbl tfoot td{font-weight:600;border-bottom:0}
+.grp li{display:grid;grid-template-columns:1fr auto;gap:2px 12px;padding:9px 0;border-top:1px solid var(--line);font-size:14px}
+.grp li:first-child{border-top:0}
+.grp span{color:var(--muted);font-size:13px;grid-column:1}
+.grp b{font-weight:600;grid-row:1/3;grid-column:2;align-self:center;font-variant-numeric:tabular-nums}
+.foot{font-size:12px;color:var(--muted);text-align:center;margin-top:22px;line-height:1.8}
+.back{display:flex;justify-content:center;margin-top:12px}
+.back a{display:inline-flex;align-items:center;height:44px;padding:0 20px;border-radius:999px;border:1.5px solid var(--ink);text-decoration:none;font-weight:500}
+@media (min-width:720px){
+  .wrap{padding:0 24px 56px}
+  h1{font-size:32px}
+  .kpis{grid-template-columns:2fr 1fr 1fr 1fr}
+  .kpi--main{grid-column:auto}.kpi strong{font-size:24px}
+  .two{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .two .card{margin-top:12px}
+  #storeChart svg{max-width:560px;margin:0 auto}
+  .alert svg{max-width:460px}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <span class="logo"><i><svg viewBox="0 0 16 16" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round"><path d="M8 14V6M8 6c0-2 1.5-3.5 3.5-3.5C11.5 4.5 10 6 8 6Zm0 0C8 4 6.5 2.5 4.5 2.5 4.5 4.5 6 6 8 6Zm0 4c0-2 1.5-3 3.5-3 0 2-1.5 3-3.5 3Zm0 0c0-2-1.5-3-3.5-3 0 2 1.5 3 3.5 3Z"/></svg></i><span id="co"></span></span>
+    <a href="./" data-back>回到工作流</a>
+  </div>
+  <h1 id="title"></h1>
+  <p class="sub" id="sub"></p>
+
+  <div class="kpis" id="kpis"></div>
+
+  <section class="card ai">
+    <h2>今天要注意的<small>大模型看完数据写的</small></h2>
+    <ol id="ai"></ol>
+  </section>
+
+  <section class="card">
+    <h2>异常<small id="alertN"></small></h2>
+    <div class="alerts" id="alerts"></div>
+  </section>
+
+  <section class="card">
+    <h2>各门店营业额<small>昨天 vs 上周二</small></h2>
+    <div class="legend"><span><i style="background:var(--brand)"></i>昨天</span><span><i style="background:var(--bar)"></i>上周二</span></div>
+    <div id="storeChart"></div>
+  </section>
+
+  <div class="two">
+    <section class="card">
+      <h2>分时段<small>6 家门店合计</small></h2>
+      <div class="legend"><span><i style="background:var(--brand)"></i>昨天</span><span><i style="background:#a9a39a"></i>上周二</span></div>
+      <div id="hourChart"></div>
+    </section>
+    <section class="card">
+      <h2>卖得最好的 8 样<small>按金额</small></h2>
+      <ul class="prod" id="prod"></ul>
+    </section>
+  </div>
+
+  <section class="card">
+    <h2>门店明细</h2>
+    <table class="tbl" id="tbl"></table>
+  </section>
+
+  <section class="card">
+    <h2>团购<small>业务员登记</small></h2>
+    <ul class="grp" id="grp"></ul>
+  </section>
+
+  <p class="foot" id="foot"></p>
+  <div class="back"><a href="./" data-back>回到工作流画布</a></div>
+</div>
+<script src="data.js"></script>
+<script>
+(function(){
+  var W=WF,m=W.money,p=W.pct,t=W.total;
+  function $(id){return document.getElementById(id)}
+  function cls(r){return r>=0?'up':'down'}
+  document.title='销售日报 '+W.day+' · '+W.company;
+  $('co').textContent=W.company;
+  $('title').textContent=W.day+'（'+W.week+'）销售日报';
+  $('sub').textContent='6 家门店 + 团购 · '+W.sendAt+' 自动生成';
+  $('kpis').innerHTML=
+    '<div class="kpi kpi--main"><b>营业额</b><strong>'+m(t.today)+'</strong><span>比上周二 <span class="'+cls(t.vsLast)+'">'+p(t.vsLast)+'</span>　比前天 <span class="'+cls(t.vsYday)+'">'+p(t.vsYday)+'</span></span></div>'+
+    '<div class="kpi"><b>单数</b><strong>'+t.orders.toLocaleString('en-US')+'</strong><span>含团购 3 单</span></div>'+
+    '<div class="kpi"><b>客单价</b><strong>¥'+t.avg.toFixed(1)+'</strong><span>门店</span></div>'+
+    '<div class="kpi"><b>团购</b><strong>'+m(W.group.today)+'</strong><span>上周二 '+m(W.group.lastwk)+'</span></div>';
+  $('ai').innerHTML=W.conclusion.map(function(s){return '<li>'+s+'</li>'}).join('');
+  $('alertN').textContent=W.anomalies.length+' 条';
+
+  // 江南大道店分时小图
+  function mini(){var w=320,h=70,a=W.jiangnanHourly,b=W.jiangnanLast,mx=Math.max.apply(null,b.concat(a)),n=a.length,bw=w/n;
+    var s='<svg viewBox="0 0 '+w+' '+(h+16)+'" role="img" aria-label="江南大道店分时段：15 点以后没有流水">';
+    for(var i=0;i<n;i++){var hb=b[i]/mx*h,ha=a[i]/mx*h;
+      s+='<rect x="'+(i*bw+2)+'" y="'+(h-hb)+'" width="'+(bw-4)+'" height="'+hb+'" rx="2" fill="#e8c9c4"/>';
+      s+='<rect x="'+(i*bw+5)+'" y="'+(h-ha)+'" width="'+(bw-10)+'" height="'+ha+'" rx="2" fill="#c0392b"/>';}
+    s+='<line x1="'+(8.2*bw)+'" x2="'+(8.2*bw)+'" y1="0" y2="'+h+'" stroke="#c0392b" stroke-dasharray="3 3"/>';
+    s+='<text x="'+(8.2*bw+5)+'" y="12" font-size="10" fill="#c0392b">15:12 后没有流水</text>';
+    [0,4,8,12].forEach(function(i){s+='<text x="'+(i*bw+bw/2)+'" y="'+(h+13)+'" font-size="9" fill="#8a857c" text-anchor="middle">'+W.hours[i]+'点</text>'});
+    return s+'</svg>'}
+  $('alerts').innerHTML=W.anomalies.map(function(a,i){
+    return '<div class="alert'+(a.level==='red'?' alert--red':'')+'"><b>'+a.title+'</b><p>'+a.body+'</p>'+(i===0?mini():'')+'<em>建议：'+a.act+'</em></div>'}).join('');
+
+  // 门店对比横条
+  (function(){var S=W.stores,w=340,rh=36,lw=74,h=S.length*rh+6,mx=Math.max.apply(null,S.map(function(s){return Math.max(s.today,s.lastwk)})),cw=w-lw-74;
+    var s='<svg class="chart" viewBox="0 0 '+w+' '+h+'" role="img" aria-label="各门店昨天和上周二营业额对比">';
+    S.forEach(function(st,i){var y=i*rh+4,r=st.today/st.lastwk-1,bad=r<-.2;
+      s+='<text x="0" y="'+(y+15)+'" font-size="12" fill="#1d1c1a">'+st.name+'</text>';
+      s+='<rect x="'+lw+'" y="'+(y+3)+'" width="'+(st.lastwk/mx*cw)+'" height="8" rx="4" fill="#d8d3c8"/>';
+      s+='<rect x="'+lw+'" y="'+(y+13)+'" width="'+(st.today/mx*cw)+'" height="10" rx="5" fill="'+(bad?'#c0392b':'#b4532a')+'"/>';
+      s+='<text x="'+(w)+'" y="'+(y+13)+'" font-size="12" text-anchor="end" fill="#1d1c1a" font-weight="600">'+m(st.today)+'</text>';
+      s+='<text x="'+(w)+'" y="'+(y+27)+'" font-size="11" text-anchor="end" fill="'+(r>=0?'#1f7a4d':'#c0392b')+'">'+p(r)+'</text>';});
+    $('storeChart').innerHTML=s+'</svg>'})();
+
+  // 分时段折线
+  (function(){var a=W.hourlyToday,b=W.hourlyLast,w=340,h=150,pl=30,pb=20,pt=8,n=a.length,mx=Math.ceil(Math.max.apply(null,a.concat(b))/1000)*1000;
+    function x(i){return pl+i*(w-pl-6)/(n-1)}function y(v){return pt+(h-pt-pb)*(1-v/mx)}
+    function path(d){return d.map(function(v,i){return(i?'L':'M')+x(i).toFixed(1)+' '+y(v).toFixed(1)}).join('')}
+    var s='<svg class="chart" viewBox="0 0 '+w+' '+h+'" role="img" aria-label="分时段营业额，昨天和上周二">';
+    for(var g=0;g<=mx;g+=mx/2){s+='<line x1="'+pl+'" x2="'+w+'" y1="'+y(g)+'" y2="'+y(g)+'" stroke="rgba(0,0,0,.07)"/><text x="'+(pl-5)+'" y="'+(y(g)+4)+'" font-size="10" text-anchor="end" fill="#8a857c">'+(g/1000)+'k</text>'}
+    s+='<path d="'+path(b)+'" fill="none" stroke="#a9a39a" stroke-width="1.6" stroke-dasharray="4 3"/>';
+    s+='<path d="'+path(a)+'L'+x(n-1)+' '+y(0)+'L'+x(0)+' '+y(0)+'Z" fill="rgba(180,83,42,.1)"/>';
+    s+='<path d="'+path(a)+'" fill="none" stroke="#b4532a" stroke-width="2.2" stroke-linejoin="round"/>';
+    [0,3,6,9,12,14].forEach(function(i){s+='<text x="'+x(i)+'" y="'+(h-4)+'" font-size="10" text-anchor="middle" fill="#8a857c">'+W.hours[i]+'点</text>'});
+    $('hourChart').innerHTML=s+'</svg>'})();
+
+  // 商品 TOP
+  (function(){var P=W.products.slice().sort(function(a,b){return b.sum-a.sum}),mx=P[0].sum;
+    $('prod').innerHTML=P.map(function(x){return '<li><span>'+x.name+(x.tag?'<span class="tag">'+x.tag+'</span>':'')+'</span><span class="bar"><i style="width:'+(x.sum/mx*100).toFixed(1)+'%"></i></span><span class="num">'+m(x.sum)+'</span></li>'}).join('')})();
+
+  // 明细表
+  (function(){var r='<thead><tr><th>门店</th><th>营业额</th><th>单数</th><th>客单价</th><th>比上周二</th></tr></thead><tbody>';
+    W.stores.forEach(function(s){var c=s.today/s.lastwk-1;r+='<tr'+(c<-.2?' class="warn"':'')+'><td>'+s.name+'</td><td>'+m(s.today)+'</td><td>'+s.orders+'</td><td>'+(s.today/s.orders).toFixed(1)+'</td><td class="'+cls(c)+'">'+p(c)+'</td></tr>'});
+    var st=W.stores.reduce(function(a,s){return a+s.today},0),sl=W.stores.reduce(function(a,s){return a+s.lastwk},0);
+    r+='</tbody><tfoot><tr><td>门店合计</td><td>'+m(st)+'</td><td>'+t.storeOrders.toLocaleString('en-US')+'</td><td>'+t.avg.toFixed(1)+'</td><td class="'+cls(st/sl-1)+'">'+p(st/sl-1)+'</td></tr></tfoot>';
+    $('tbl').innerHTML=r})();
+  $('grp').innerHTML=W.group.rows.map(function(g){return '<li>'+g.client+' · '+g.n+' 份<span>'+g.who+'　'+g.item+'</span><b>'+m(g.sum)+'</b></li>'}).join('');
+  $('foot').innerHTML='数据来自 6 家门店和 2 位业务员交的 7 份表格<br>由「门店销售日报」工作流每天 08:30 自动整理 · 演示数据';
+  if(/[?&]shot\b/.test(location.search))document.querySelectorAll('.back,.top a').forEach(function(e){e.style.display='none'});
+})();
+</script>
+</body>
+</html>

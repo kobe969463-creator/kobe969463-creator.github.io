@@ -1,0 +1,333 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>恒顺订货 · 客户端试玩</title>
+<meta name="theme-color" content="#0d5c56">
+<link rel="icon" href="/favicon.png">
+<style>
+:root{--brand:#0d5c56;--brand-2:#11766e;--brand-soft:#e3f1ef;--hot:#e2541b;--hot-soft:#fdeee6;--ink:#17191c;--muted:#6b7177;--line:#e7e9ec;--bg:#f3f4f6;--card:#fff;
+  --font:-apple-system,BlinkMacSystemFont,'PingFang SC','Hiragino Sans GB','Noto Sans SC','Microsoft YaHei',sans-serif;color-scheme:light}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:#dfe3e6}
+body{font:15px/1.5 var(--font);color:var(--ink);-webkit-font-smoothing:antialiased;overflow-x:hidden}
+button,input,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+h1,h2,h3,p{margin:0}
+.app{max-width:430px;margin:0 auto;min-height:100vh;min-height:100svh;background:var(--bg);position:relative;padding-bottom:calc(64px + env(safe-area-inset-bottom))}
+@media (min-width:600px){.app{box-shadow:0 0 0 1px rgba(0,0,0,.06),0 20px 60px -20px rgba(0,0,0,.25)}}
+.hd{position:sticky;top:0;z-index:5;background:var(--brand);color:#fff;padding:calc(10px + env(safe-area-inset-top)) 14px 12px}
+.hd__row{display:flex;align-items:center;gap:10px}
+.logo{width:34px;height:34px;border-radius:9px;background:#fff;color:var(--brand);display:grid;place-items:center;font-weight:700;font-size:15px;flex:none}
+.hd__t{flex:1;min-width:0}
+.hd__t b{display:block;font-size:16px;line-height:1.25}
+.hd__t span{font-size:12px;opacity:.82}
+.hd__chip{font-size:12px;padding:4px 9px;border-radius:999px;background:rgba(255,255,255,.16);white-space:nowrap}
+.search{margin-top:10px;display:flex;align-items:center;gap:8px;background:#fff;border-radius:10px;padding:0 12px;height:38px;color:var(--muted)}
+.search input{border:0;outline:0;flex:1;min-width:0;background:none;color:var(--ink);font-size:15px}
+.bar{position:sticky;z-index:4;background:var(--bg);padding:10px 0 6px}
+.chips{display:flex;gap:8px;overflow-x:auto;padding:0 14px;scrollbar-width:none}
+.chips::-webkit-scrollbar{display:none}
+.chip{flex:none;border:0;background:#fff;border-radius:999px;padding:6px 14px;font-size:14px;color:var(--muted);box-shadow:0 0 0 1px var(--line)}
+.chip.on{background:var(--ink);color:#fff;box-shadow:none}
+.notice{margin:10px 14px 0;padding:10px 12px;border-radius:12px;background:linear-gradient(110deg,#fff3e8,#fde6d6);display:flex;gap:10px;align-items:center}
+.notice b{display:block;font-size:14px}
+.notice span{font-size:12.5px;color:#8a4a22}
+.notice i{font-style:normal;flex:none;font-size:12px;font-weight:600;color:#fff;background:var(--hot);border-radius:6px;padding:2px 6px}
+.mine{margin:10px 0 0;padding:0 14px;display:flex;gap:8px;font-size:12.5px;color:var(--muted);overflow-x:auto;scrollbar-width:none}.mine::-webkit-scrollbar{display:none}
+.mine span{flex:none;white-space:nowrap;background:#fff;border-radius:8px;padding:4px 9px;box-shadow:0 0 0 1px var(--line)}
+.mine b{color:var(--brand);font-weight:600}
+.grid{display:flex;flex-direction:column;gap:8px;padding:8px 14px 16px}
+.pc{background:var(--card);border-radius:12px;overflow:hidden;display:flex;gap:12px;border:0;padding:10px;text-align:left;width:100%}
+.pc__img{width:92px;height:92px;flex:none;border-radius:10px;overflow:hidden;position:relative}
+.pc__img svg{display:block;width:100%;height:100%}
+.tags{display:flex;gap:4px;flex-wrap:wrap;margin-top:3px}
+.tag{font-size:11px;line-height:1;padding:4px 6px;border-radius:5px;background:var(--hot);color:#fff;font-weight:600}
+.tag--g{background:var(--brand)}
+.pc__b{display:flex;flex-direction:column;gap:1px;flex:1;min-width:0}
+.pc__n{font-size:14.5px;font-weight:600;line-height:1.3}
+.pc__s{font-size:12px;color:var(--muted)}
+.pc__p{display:flex;align-items:flex-end;justify-content:space-between;margin-top:auto;padding-top:6px}
+.price{color:var(--hot);font-weight:700;font-size:17px;line-height:1}
+.price small{font-size:12px;font-weight:500}
+.del{font-size:12px;color:#9aa0a6;text-decoration:line-through;margin-left:4px;font-weight:400}
+.plus{width:28px;height:28px;border-radius:50%;background:var(--brand);color:#fff;display:grid;place-items:center;font-size:20px;line-height:1;flex:none}
+.qtyb{font-size:12px;color:var(--brand);font-weight:600}
+.empty{padding:60px 20px;text-align:center;color:var(--muted)}
+.tab{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:430px;z-index:6;background:#fff;display:flex;border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom)}
+.tab a{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;padding:8px 0 7px;font-size:11.5px;color:var(--muted);text-decoration:none;position:relative}
+.tab a svg{width:23px;height:23px}
+.tab a.on{color:var(--brand);font-weight:600}
+.badge{position:absolute;top:3px;left:calc(50% + 6px);min-width:18px;height:18px;border-radius:9px;background:var(--hot);color:#fff;font-size:11px;font-weight:600;display:grid;place-items:center;padding:0 5px}
+.pg{padding:14px}
+.ttl{font-size:18px;font-weight:700;padding:4px 2px 12px;display:flex;align-items:center;gap:8px}
+.back{border:0;background:none;padding:4px 6px 4px 0;font-size:22px;line-height:1;color:var(--ink)}
+.box{background:#fff;border-radius:12px;padding:14px;margin-bottom:10px}
+.box h3{font-size:15px;margin-bottom:10px}
+.ln{display:grid;grid-template-columns:56px 1fr auto;gap:10px;align-items:center;padding:8px 0;border-top:1px solid var(--line)}
+.ln:first-of-type{border-top:0}
+.ln svg,.ln__im svg{width:56px;height:56px;border-radius:8px;display:block}
+.ln b{font-size:14px;display:block;line-height:1.3}
+.ln small{color:var(--muted);font-size:12px;display:block}
+.ln .pr{font-size:13px;color:var(--hot);font-weight:600}
+.step{display:flex;align-items:center;border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.step button{width:30px;height:30px;border:0;background:#f6f7f8;font-size:18px;line-height:1}
+.step span{min-width:34px;text-align:center;font-size:14px;font-weight:600}
+.sum{display:flex;justify-content:space-between;font-size:14px;padding:4px 0;color:var(--muted)}
+.sum b{color:var(--ink);font-weight:500}
+.sum.big{font-size:16px;color:var(--ink);font-weight:600;border-top:1px solid var(--line);margin-top:6px;padding-top:10px}
+.sum.big b{color:var(--hot);font-size:20px;font-weight:700}
+.gift{display:flex;gap:8px;align-items:center;font-size:13.5px;padding:6px 10px;background:var(--brand-soft);border-radius:8px;margin-top:6px;color:#0b4a45}
+.gift i{font-style:normal;font-size:11px;font-weight:700;background:var(--brand);color:#fff;border-radius:4px;padding:2px 5px;flex:none}
+.hint{font-size:12.5px;color:var(--muted);margin-top:8px}
+.foot{position:fixed;bottom:calc(57px + env(safe-area-inset-bottom));left:50%;transform:translateX(-50%);width:100%;max-width:430px;z-index:6;background:#fff;border-top:1px solid var(--line);display:flex;align-items:center;gap:12px;padding:10px 14px}
+.foot.nontab{bottom:0;padding-bottom:calc(10px + env(safe-area-inset-bottom))}
+.foot .t{flex:1;font-size:13px;color:var(--muted)}
+.foot .t b{font-size:19px;color:var(--hot)}
+.btn{border:0;border-radius:999px;background:var(--brand);color:#fff;font-weight:600;font-size:15px;height:44px;padding:0 22px}
+.btn--hot{background:var(--hot)}
+.btn--line{background:#fff;color:var(--brand);box-shadow:inset 0 0 0 1.5px var(--brand)}
+.btn--blk{width:100%}
+.btn:disabled{opacity:.45}
+.mask{position:fixed;inset:0;z-index:20;background:rgba(0,0,0,.45);display:flex;align-items:flex-end;justify-content:center}
+.sheet{background:#fff;width:100%;max-width:430px;border-radius:16px 16px 0 0;padding:16px 16px calc(16px + env(safe-area-inset-bottom));max-height:88vh;overflow:auto}
+.sheet__top{display:flex;gap:12px}
+.sheet__top svg{width:104px;height:104px;border-radius:10px;flex:none}
+.sheet .row{display:flex;justify-content:space-between;align-items:center;margin:16px 0}
+.cd{display:inline-block;margin-top:6px;font-size:12.5px;color:var(--hot);background:var(--hot-soft);border-radius:6px;padding:3px 8px}
+.rule{font-size:13px;color:var(--muted);margin-top:4px}
+.prog{display:flex;justify-content:space-between;position:relative;margin:6px 0 2px}
+.prog::before{content:'';position:absolute;left:12%;right:12%;top:11px;height:2px;background:var(--line)}
+.prog .bar2{position:absolute;left:12%;top:11px;height:2px;background:var(--brand);transition:width .5s}
+.prog div{position:relative;width:25%;text-align:center;font-size:12px;color:var(--muted)}
+.prog div i{display:block;width:24px;height:24px;margin:0 auto 4px;border-radius:50%;background:#fff;border:2px solid var(--line);font-style:normal;font-size:12px;line-height:20px;color:#bbb}
+.prog div.on{color:var(--ink);font-weight:600}
+.prog div.on i{background:var(--brand);border-color:var(--brand);color:#fff}
+.prog div.cur i{box-shadow:0 0 0 4px var(--brand-soft)}
+.prog div small{display:block;font-weight:400;color:var(--muted);font-size:11px}
+.st{font-size:20px;font-weight:700;color:var(--brand)}
+.st small{display:block;font-size:13px;font-weight:400;color:var(--muted);margin-top:2px}
+.pics{display:flex;gap:8px;flex-wrap:wrap}
+.pics .pic{width:96px;border-radius:8px;overflow:hidden;border:1px solid var(--line);background:#fff;padding:0}
+.pics .pic svg,.pics .pic img{display:block;width:100%;height:auto}
+.pics .pic.pay{width:84px}
+.oc{background:#fff;border-radius:12px;padding:12px 14px;margin-bottom:10px;display:block;text-decoration:none;color:inherit}
+.oc__h{display:flex;justify-content:space-between;font-size:13px;color:var(--muted)}
+.oc__h b{font-weight:600}
+.s-pay{color:var(--hot)}.s-pack{color:#b7791f}.s-ship{color:#2563eb}.s-done{color:var(--brand)}
+.oc__ims{display:flex;gap:6px;margin:10px 0}
+.oc__ims svg{width:48px;height:48px;border-radius:6px}
+.oc__f{display:flex;justify-content:space-between;font-size:13px;color:var(--muted)}
+.oc__f b{color:var(--ink)}
+.tabs2{display:flex;gap:0;background:#fff;border-radius:10px;padding:3px;margin-bottom:10px}
+.tabs2 button{flex:1;border:0;background:none;border-radius:8px;padding:7px 0;font-size:13px;color:var(--muted)}
+.tabs2 button.on{background:var(--brand-soft);color:var(--brand);font-weight:600}
+.me{background:linear-gradient(135deg,var(--brand),#178a80);color:#fff;border-radius:14px;padding:16px;margin-bottom:10px}
+.me b{font-size:18px;display:block}
+.me span{font-size:13px;opacity:.85}
+.me__g{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:14px}
+.me__g div{background:rgba(255,255,255,.13);border-radius:10px;padding:8px 10px;font-size:12px}
+.me__g div b{font-size:15px;margin-top:2px}
+.li{display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-top:1px solid var(--line);font-size:14.5px;gap:10px;text-decoration:none;color:inherit;background:none;border-left:0;border-right:0;border-bottom:0;width:100%;text-align:left}
+.li:first-of-type{border-top:0}
+.li small{color:var(--muted);font-size:12.5px}
+.li .go{color:#b0b5ba}
+.ms{padding:10px 0;border-top:1px solid var(--line)}
+.ms:first-of-type{border-top:0}
+.ms b{font-size:14px;display:block}
+.ms p{font-size:13px;color:var(--muted)}
+.ms small{font-size:12px;color:#9aa0a6}
+.cs{display:flex;gap:6px;flex-wrap:wrap}
+.cs button{border:0;border-radius:8px;padding:8px 10px;background:#f4f5f6;font-size:13px;text-align:left}
+.cs button.on{background:var(--brand-soft);color:var(--brand);font-weight:600;box-shadow:inset 0 0 0 1.5px var(--brand)}
+.cs button small{display:block;font-weight:400;color:var(--muted);font-size:11.5px}
+label.f{display:block;margin-bottom:12px;font-size:13px;color:var(--muted)}
+label.f input,textarea{display:block;width:100%;margin-top:5px;height:44px;border:1px solid var(--line);border-radius:10px;padding:0 12px;font-size:15px;background:#fff;color:var(--ink);outline-color:var(--brand)}
+textarea{height:80px;padding:10px 12px;resize:none}
+.stars{display:flex;gap:6px;margin:6px 0 12px}
+.stars button{border:0;background:none;font-size:30px;line-height:1;color:#d7dadd;padding:0}
+.stars button.on{color:#f5a524}
+.toast{position:fixed;left:50%;top:calc(16px + env(safe-area-inset-top));transform:translate(-50%,calc(-100% - 40px));z-index:30;background:rgba(23,25,28,.94);color:#fff;font-size:14px;border-radius:12px;padding:10px 14px;max-width:min(390px,calc(100% - 28px));transition:transform .35s cubic-bezier(.16,1,.3,1);display:flex;gap:8px;align-items:center}
+.toast.show{transform:translate(-50%,0)}
+.toast i{width:8px;height:8px;border-radius:50%;background:#4ade80;flex:none}
+.upl{display:flex;gap:10px;margin-top:10px}
+.upl label,.upl button{flex:1;height:44px;border-radius:10px;display:grid;place-items:center;font-size:14px;font-weight:600;border:1.5px dashed #b9c0c6;background:#fafbfb;color:var(--ink);cursor:pointer}
+.upl input{display:none}
+.acct{background:#f6f7f8;border-radius:10px;padding:10px 12px;font-size:13.5px}
+.acct div{display:flex;justify-content:space-between;padding:3px 0}
+.acct span{color:var(--muted)}
+.ok{text-align:center;padding:30px 10px 10px}
+.ok i{display:grid;place-items:center;width:56px;height:56px;margin:0 auto 12px;border-radius:50%;background:var(--brand-soft);color:var(--brand);font-style:normal;font-size:28px}
+.big-img{position:fixed;inset:0;z-index:40;background:rgba(0,0,0,.85);display:grid;place-items:center;padding:20px}
+.big-img svg,.big-img img{max-width:100%;max-height:85vh;width:min(380px,100%);height:auto;border-radius:10px;background:#fff}
+.rev{font-size:13.5px;background:#fffaf0;border-radius:8px;padding:8px 10px;margin-top:8px}
+</style>
+</head>
+<body>
+<div class="app" id="app"></div>
+<nav class="tab" id="tab"></nav>
+<div class="toast" id="toast" role="status" aria-live="polite"><i></i><span></span></div>
+<script src="../shared.js"></script>
+<script>
+(function(){
+var H=HS,db=H.load(),E=H.esc,M=H.money;
+var meKey=H.KEY+'-me';
+function getMe(){var id='c1';try{id=localStorage.getItem(meKey)||'c1'}catch(e){}var c=H.find(db.customers,id);return c&&c.status==='ok'?c:H.find(db.customers,'c1')}
+var me=getMe();
+var cat='全部',q='',otab='all';
+var carts={};
+function cartKey(){return H.KEY+'-cart-'+me.id}
+function cart(){if(!carts[me.id]){try{carts[me.id]=JSON.parse(localStorage.getItem(cartKey())||'[]')}catch(e){carts[me.id]=[]}}return carts[me.id]}
+function saveCart(){try{localStorage.setItem(cartKey(),JSON.stringify(cart()))}catch(e){}}
+function cartCount(){return cart().reduce(function(s,i){return s+i.qty},0)}
+var app=document.getElementById('app'),tab=document.getElementById('tab');
+var ICON={home:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M4 10.5 12 4l8 6.5V20a1 1 0 0 1-1 1h-4.5v-6h-5v6H5a1 1 0 0 1-1-1z"/></svg>',
+cart:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 4h2.2l2.1 11.2a1.5 1.5 0 0 0 1.5 1.2h8.6a1.5 1.5 0 0 0 1.5-1.2L20.4 8H6.1"/><circle cx="9.5" cy="20" r="1.3"/><circle cx="17" cy="20" r="1.3"/></svg>',
+order:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="3.5" width="14" height="17" rx="2"/><path d="M9 8h6M9 12h6M9 16h3"/></svg>',
+me:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8.5" r="3.8"/><path d="M4.5 20.5c.8-3.8 3.8-6 7.5-6s6.7 2.2 7.5 6" stroke-linecap="round"/></svg>'};
+function route(){return (location.hash.replace(/^#\/?/,'')||'home').split('/')}
+function go(h){location.hash='#/'+h}
+function drawTab(){var r=route()[0],n=cartCount();
+  var on=function(k){return (r===k||(k==='orders'&&r==='order')||(k==='home'&&r==='home'))?' class="on"':''};
+  tab.innerHTML='<a href="#/home"'+on('home')+'>'+ICON.home+'进货</a><a href="#/cart"'+on('cart')+'>'+ICON.cart+'进货单'+(n?'<span class="badge">'+n+'</span>':'')+'</a><a href="#/orders"'+on('orders')+'>'+ICON.order+'订单</a><a href="#/me"'+on('me')+'>'+ICON.me+'我的</a>';
+  tab.style.display=(r==='register'||r==='pay')?'none':'';
+}
+function header(){var b=H.br(me.branch);return '<header class="hd"><div class="hd__row"><div class="logo">恒</div><div class="hd__t"><b>恒顺日化批发 · 订货</b><span>'+E(me.name)+'</span></div><span class="hd__chip">'+b.name+'价</span></div>'+
+  '<label class="search"><svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="9" r="6"/><path d="m14 14 4 4" stroke-linecap="round"/></svg><input id="q" placeholder="搜商品，比如 洗衣液、抽纸" value="'+E(q)+'" aria-label="搜商品"></label></header>'}
+function tags(p){var t='';if(H.promoOn(p))t+='<span class="tag">特价</span>';if(p.buyN)t+='<span class="tag tag--g">买'+p.buyN+'送1</span>';return t?'<div class="tags">'+t+'</div>':''}
+function inCart(pid){var i=cart().filter(function(x){return x.pid===pid})[0];return i?i.qty:0}
+function home(){
+  var list=db.products.filter(function(p){return H.visible(p,me.branch)&&(cat==='全部'||p.cat===cat)&&(!q||(p.name+p.spec+p.cat).indexOf(q)>=0)});
+  var hidden=db.products.filter(function(p){return !H.visible(p,me.branch)}).length;
+  var nt=db.notices[0];
+  var disc=me.disc<1?'<span>拿货价 <b>'+(me.disc*100).toFixed(0).replace(/0$/,'')+' 折</b>（特价品除外）</span>':'';
+  app.innerHTML=header()+
+   (nt?'<a class="notice" href="#/me/msg" style="text-decoration:none;color:inherit"><i>活动</i><div><b>'+E(nt.title)+'</b><span>'+E(nt.body)+'</span></div></a>':'')+
+   '<div class="mine">'+disc+'<span>满 '+H.GIFT_LINE+' 送手帕纸 1 箱</span><span>专属业务员 <b>'+E(H.staff(me.sales).name)+'</b></span></div>'+
+   '<div class="bar" id="bar"><div class="chips">'+['全部'].concat(H.CATS).map(function(c){return '<button class="chip'+(c===cat?' on':'')+'" data-cat="'+c+'">'+c+'</button>'}).join('')+'</div></div>'+
+   (list.length?'<div class="grid">'+list.map(function(p){var up=H.unitPrice(p,me.branch),lp=H.price(p,me.branch),n=inCart(p.id);
+     return '<button class="pc" data-p="'+p.id+'"><div class="pc__img">'+H.prodImg(p)+'</div><div class="pc__b"><span class="pc__n">'+E(p.name)+'</span><span class="pc__s">'+E(p.spec)+'</span>'+tags(p)+'<div class="pc__p"><span class="price"><small>¥</small>'+up+'<small>/箱</small>'+(up<lp?'<span class="del">¥'+lp+'</span>':'')+'</span>'+(n?'<span class="qtyb">已加 '+n+'</span>':'<span class="plus" aria-hidden="true">+</span>')+'</div></div></button>'}).join('')+'</div>'
+     +'<p class="hint" style="text-align:center;padding:0 14px 20px">'+H.br(me.branch).name+'没货的 '+hidden+' 样商品先不显示，补货后自动上架</p>'
+   :'<div class="empty">没找到相关商品</div>');
+  var hd=app.querySelector('.hd');document.getElementById('bar').style.top=hd.offsetHeight+'px';
+  var inp=document.getElementById('q');inp.oninput=function(){q=inp.value.trim();var pos=inp.selectionStart;home();var n2=document.getElementById('q');n2.focus();try{n2.setSelectionRange(pos,pos)}catch(e){}};
+  app.querySelectorAll('[data-cat]').forEach(function(b){b.onclick=function(){cat=b.dataset.cat;home()}});
+  app.querySelectorAll('[data-p]').forEach(function(b){b.onclick=function(){sheet(b.dataset.p)}});
+}
+function sheet(pid){
+  var p=H.find(db.products,pid),up=H.unitPrice(p,me.branch),lp=H.price(p,me.branch),qty=inCart(pid)||(p.buyN||5);
+  var m=document.createElement('div');m.className='mask';
+  function left(){var ms=p.promo.end-Date.now(),d=Math.floor(ms/H.DAY),h=Math.floor(ms%H.DAY/36e5);return (d?d+' 天 ':'')+h+' 小时'}
+  function draw(){
+    var rules=[];if(p.buyN)rules.push('买 '+p.buyN+' 箱送 1 箱，'+(qty>=p.buyN?'这次送 <b>'+Math.floor(qty/p.buyN)+'</b> 箱':'还差 '+(p.buyN-qty)+' 箱'));
+    if(!H.promoOn(p)&&me.disc<1)rules.push('你的拿货价再打 '+(me.disc*100).toFixed(0).replace(/0$/,'')+' 折，结算时自动减');
+    m.innerHTML='<div class="sheet" role="dialog" aria-label="'+E(p.name)+'"><div class="sheet__top">'+H.prodImg(p)+'<div><b style="font-size:16px">'+E(p.name)+'</b><div class="rule">'+E(p.spec)+' · '+E(p.cat)+'</div><div style="margin-top:8px" class="price"><small>¥</small>'+up+'<small>/箱</small>'+(up<lp?'<span class="del">¥'+lp+'</span>':'')+'</div>'+
+    (H.promoOn(p)?'<span class="cd">特价还剩 '+left()+'</span>':'')+'</div></div>'+
+    (rules.length?'<div style="margin-top:12px">'+rules.map(function(r){return '<div class="gift"><i>优惠</i><span>'+r+'</span></div>'}).join('')+'</div>':'')+
+    '<div class="row"><span>'+H.br(me.branch).name+'有货</span><div class="step"><button data-d="-1" aria-label="减一箱">−</button><span>'+qty+'</span><button data-d="1" aria-label="加一箱">+</button></div></div>'+
+    '<button class="btn btn--blk" id="add">'+(inCart(pid)?'改成 '+qty+' 箱':'加入进货单 · '+M(up*qty))+'</button></div>';
+    m.querySelectorAll('[data-d]').forEach(function(b){b.onclick=function(){qty=Math.max(1,Math.min(p.stock[me.branch],qty+ +b.dataset.d));draw()}});
+    m.querySelector('#add').onclick=function(){var c=cart(),it=c.filter(function(x){return x.pid===pid})[0];if(it)it.qty=qty;else c.push({pid:pid,qty:qty});saveCart();m.remove();toast('已加入进货单');render()};
+  }
+  m.onclick=function(e){if(e.target===m)m.remove()};
+  draw();document.body.appendChild(m);
+}
+function cartPage(){
+  var c=cart().filter(function(i){var p=H.find(db.products,i.pid);return p&&H.visible(p,me.branch)});
+  if(!c.length){app.innerHTML='<div class="pg"><div class="ttl">进货单</div><div class="box empty">进货单是空的<br><br><button class="btn" onclick="location.hash=\'#/home\'">去挑商品</button></div></div>';return}
+  var r=H.calc(db,me,c);
+  app.innerHTML='<div class="pg" style="padding-bottom:150px"><div class="ttl">进货单 <small style="font-size:13px;color:var(--muted);font-weight:400">'+H.br(me.branch).name+'发货</small></div><div class="box">'+
+   r.lines.map(function(l){var p=H.find(db.products,l.pid);return '<div class="ln">'+H.prodImg(p)+'<div><b>'+E(p.name)+'</b><small>'+E(p.spec)+'</small><span class="pr">¥'+l.price+'/箱'+(l.promo?' · 特价':'')+'</span></div><div class="step"><button data-pid="'+p.id+'" data-d="-1" aria-label="减一箱">−</button><span>'+l.qty+'</span><button data-pid="'+p.id+'" data-d="1" aria-label="加一箱">+</button></div></div>'}).join('')+
+   '</div><div class="box"><h3>金额</h3><div class="sum">商品合计<b>'+M(r.sub)+'</b></div>'+(me.disc<1?'<div class="sum">你的拿货折扣（'+(me.disc*100).toFixed(0).replace(/0$/,'')+' 折，特价品不参与）<b>−'+M(r.disc)+'</b></div>':'')+
+   r.gifts.map(function(g){var p=H.find(db.products,g.pid);return '<div class="gift"><i>'+g.why+'</i><span>送 '+E(p.name)+' '+g.qty+' 箱</span></div>'}).join('')+
+   (r.total<H.GIFT_LINE?'<p class="hint">再买 '+M(H.GIFT_LINE-r.total)+' 送手帕纸 1 箱</p>':'')+
+   '<div class="sum big">应付<b>'+M(r.total)+'</b></div><p class="hint">下单后对公转账，上传付款截图，仓库确认收款就备货。</p></div></div>'+
+   '<div class="foot"><div class="t">共 '+cartCount()+' 箱　<b>'+M(r.total)+'</b></div><button class="btn btn--hot" id="sub">提交订单</button></div>';
+  app.querySelectorAll('[data-pid]').forEach(function(b){b.onclick=function(){var it=cart().filter(function(x){return x.pid===b.dataset.pid})[0];it.qty+= +b.dataset.d;if(it.qty<=0)carts[me.id]=cart().filter(function(x){return x!==it});saveCart();render()}});
+  document.getElementById('sub').onclick=function(){db=H.load();var o=H.makeOrder(db,me,c,Date.now());db.orders.unshift(o);H.save(db);carts[me.id]=[];saveCart();go('pay/'+o.id)};
+}
+function payPage(id){
+  var o=H.find(db.orders,id);if(!o)return go('orders');
+  app.innerHTML='<div class="pg" style="padding-bottom:90px"><div class="ttl"><button class="back" onclick="location.hash=\'#/order/'+o.id+'\'" aria-label="返回">‹</button>付款</div>'+
+   '<div class="box" style="text-align:center"><div style="color:var(--muted);font-size:13px">订单 '+o.no+' 应付</div><div style="font-size:30px;font-weight:700;color:var(--hot)">'+M(o.total)+'</div></div>'+
+   '<div class="box"><h3>转到公司对公账户</h3><div class="acct"><div><span>户名</span>恒顺日化批发有限公司</div><div><span>开户行</span>示例银行 城东支行</div><div><span>账号</span>6222 •••• •••• 6608</div><div><span>备注</span>'+o.no+'</div></div></div>'+
+   '<div class="box"><h3>上传付款截图</h3><p class="hint" style="margin-top:0">转好账截个图传上来，仓库看到就确认收款。</p><div id="shot" class="pics" style="margin-top:10px"></div><div class="upl"><label>从相册选<input type="file" accept="image/*" id="file"></label><button id="demo">用示例截图</button></div></div></div>'+
+   '<div class="foot nontab"><div class="t">传了截图才能提交</div><button class="btn" id="ok" disabled>提交给仓库</button></div>';
+  var shot=null;
+  function show(){document.getElementById('shot').innerHTML=shot?'<div class="pic pay">'+H.imgOf(shot,'pay',o)+'</div>':'';document.getElementById('ok').disabled=!shot}
+  document.getElementById('demo').onclick=function(){shot='demo';show()};
+  document.getElementById('file').onchange=function(e){var f=e.target.files[0];if(f)H.shrink(f,function(d){if(d){shot=d;show()}})};
+  document.getElementById('ok').onclick=function(){db=H.load();var oo=H.find(db.orders,id);oo.payShot=shot;H.save(db);toast('已提交，等仓库确认收款');go('order/'+id)};
+}
+function stepTime(o,s){var k={pay:'created',pack:'paid',ship:'shipped',done:'signed'}[s];return o.t[k]?H.time(o.t[k]).replace('今天 ',''):''}
+function orderPage(id){
+  var o=H.find(db.orders,id);if(!o)return go('orders');
+  var idx=H.STEPS.indexOf(o.status);
+  var sub={pay:o.payShot?'仓库正在核对你的付款截图':'还没传付款截图',pack:'仓库已确认收款，正在备货',ship:'货已发出，到了点确认签收',done:'货已收到'+(o.review?'，评价已发给公司':'')}[o.status];
+  app.innerHTML='<div class="pg" style="padding-bottom:'+(o.status==='ship'||(o.status==='pay'&&!o.payShot)?150:20)+'px"><div class="ttl"><button class="back" onclick="location.hash=\'#/orders\'" aria-label="返回">‹</button>订单详情</div>'+
+   '<div class="box"><div class="st">'+H.STATUS[o.status]+'<small>'+sub+'</small></div><div class="prog" style="margin-top:16px"><span class="bar2" style="width:'+(idx/3*76)+'%"></span>'+
+   H.STEPS.map(function(s,i){return '<div class="'+(i<=idx?'on':'')+(i===idx?' cur':'')+'"><i>'+(i<idx||o.status==='done'?'✓':i+1)+'</i>'+['确认收款','备货','发货','签收'][i]+'<small>'+(i<=idx?stepTime(o,s):'')+'</small></div>'}).join('')+'</div></div>'+
+   (o.payShot?'<div class="box"><h3>付款截图</h3><div class="pics"><button class="pic pay" data-big="pay">'+H.imgOf(o.payShot,'pay',o)+'</button></div></div>':'')+
+   (o.photos.length?'<div class="box"><h3>备货照片 <small style="font-weight:400;color:var(--muted);font-size:12px">仓库装车前拍的</small></h3><div class="pics">'+o.photos.map(function(ph,i){return '<button class="pic" data-big="'+i+'">'+H.imgOf(ph,'pack',o)+'</button>'}).join('')+'</div></div>':'')+
+   (o.ship?'<div class="box"><h3>物流</h3><div class="acct"><div><span>物流</span>'+E(o.ship.co)+'</div><div><span>单号</span>'+E(o.ship.no)+'</div><div><span>发货时间</span>'+H.time(o.t.shipped)+'</div></div></div>':'')+
+   '<div class="box"><h3>'+o.items.length+' 样商品 · '+H.br(o.branch).name+'</h3>'+o.items.map(function(l){var p=H.find(db.products,l.pid);return '<div class="ln">'+H.prodImg(p)+'<div><b>'+E(p.name)+'</b><small>'+E(p.spec)+'</small><span class="pr">¥'+l.price+'/箱'+(l.promo?' · 特价':'')+'</span></div><span>×'+l.qty+'</span></div>'}).join('')+
+   o.gifts.map(function(g){var p=H.find(db.products,g.pid);return '<div class="gift"><i>'+g.why+'</i><span>送 '+E(p.name)+' '+g.qty+' 箱</span></div>'}).join('')+
+   '<div style="margin-top:10px"><div class="sum">商品合计<b>'+M(o.sub)+'</b></div>'+(o.disc?'<div class="sum">拿货折扣<b>−'+M(o.disc)+'</b></div>':'')+'<div class="sum big">实付<b>'+M(o.total)+'</b></div></div>'+
+   '<p class="hint">订单号 '+o.no+' · 下单 '+H.time(o.t.created)+'</p></div>'+
+   (o.review?'<div class="box"><h3>我的评价</h3><div style="color:#f5a524">'+'★★★★★'.slice(0,o.review.star)+'</div><div class="rev">'+E(o.review.text)+'</div></div>':'')+
+   '</div>'+
+   (o.status==='pay'&&!o.payShot?'<div class="foot"><div class="t">还没传付款截图</div><button class="btn btn--hot" onclick="location.hash=\'#/pay/'+o.id+'\'">去付款</button></div>':'')+
+   (o.status==='ship'?'<div class="foot"><div class="t">货到了、数量对了再点</div><button class="btn" id="sign">确认签收</button></div>':'');
+  app.querySelectorAll('[data-big]').forEach(function(b){b.onclick=function(){var d=document.createElement('div');d.className='big-img';d.innerHTML=b.dataset.big==='pay'?H.imgOf(o.payShot,'pay',o):H.imgOf(o.photos[+b.dataset.big],'pack',o);d.onclick=function(){d.remove()};document.body.appendChild(d)}});
+  var sg=document.getElementById('sign');if(sg)sg.onclick=function(){review(o.id)};
+}
+function review(id){
+  var star=5,m=document.createElement('div');m.className='mask';
+  m.innerHTML='<div class="sheet"><b style="font-size:17px">签收并评价</b><p class="hint" style="margin-top:4px">评价只有公司管理员看得到</p><div class="stars">'+[1,2,3,4,5].map(function(i){return '<button data-s="'+i+'" class="on" aria-label="'+i+' 星">★</button>'}).join('')+'</div><textarea id="rt" placeholder="货怎么样、送得快不快，随便说两句">货到了，数量对得上，包装也好</textarea><button class="btn btn--blk" id="rk" style="margin-top:12px">确认签收</button></div>';
+  m.querySelectorAll('[data-s]').forEach(function(b){b.onclick=function(){star=+b.dataset.s;m.querySelectorAll('[data-s]').forEach(function(x){x.classList.toggle('on',+x.dataset.s<=star)})}});
+  m.querySelector('#rk').onclick=function(){db=H.load();var o=H.find(db.orders,id);o.status='done';o.t.signed=Date.now();o.review={star:star,text:m.querySelector('#rt').value.trim()||'好评'};H.save(db);m.remove();seen[id]='done';toast('已签收，谢谢');render()};
+  m.onclick=function(e){if(e.target===m)m.remove()};document.body.appendChild(m);
+}
+function ordersPage(){
+  var mine=db.orders.filter(function(o){return o.cid===me.id});
+  var cnt=function(s){return mine.filter(function(o){return o.status===s}).length};
+  var list=mine.filter(function(o){return otab==='all'||o.status===otab});
+  app.innerHTML='<div class="pg"><div class="ttl">我的订单</div><div class="tabs2">'+[['all','全部'],['pay','待收款'],['pack','备货中'],['ship','已发货'],['done','已签收']].map(function(t){var n=t[0]==='all'?0:cnt(t[0]);return '<button data-t="'+t[0]+'" class="'+(otab===t[0]?'on':'')+'">'+t[1]+(n&&t[0]!=='done'?' '+n:'')+'</button>'}).join('')+'</div>'+
+   (list.length?list.map(function(o){return '<a class="oc" href="#/order/'+o.id+'"><div class="oc__h"><span>'+H.time(o.t.created)+' · '+o.no+'</span><b class="s-'+o.status+'">'+H.STATUS[o.status]+'</b></div><div class="oc__ims">'+o.items.slice(0,5).map(function(l){return H.prodImg(H.find(db.products,l.pid))}).join('')+'</div><div class="oc__f"><span>'+o.items.length+' 样 '+o.items.reduce(function(s,l){return s+l.qty},0)+' 箱'+(o.gifts.length?' · 含赠品':'')+'</span><span>实付 <b>'+M(o.total)+'</b></span></div></a>'}).join(''):'<div class="box empty">这里还没有订单</div>')+'</div>';
+  app.querySelectorAll('[data-t]').forEach(function(b){b.onclick=function(){otab=b.dataset.t;ordersPage()}});
+}
+function mePage(sub){
+  var mine=db.orders.filter(function(o){return o.cid===me.id}),month=mine.filter(function(o){return Date.now()-o.t.created<30*H.DAY});
+  if(sub==='msg'){app.innerHTML='<div class="pg"><div class="ttl"><button class="back" onclick="history.back()" aria-label="返回">‹</button>活动消息</div><div class="box">'+db.notices.map(function(n){return '<div class="ms"><b>'+E(n.title)+'</b><p>'+E(n.body)+'</p><small>'+H.time(n.t)+'</small></div>'}).join('')+'</div></div>';return}
+  var ok=db.customers.filter(function(c){return c.status==='ok'});
+  var pend=db.customers.filter(function(c){return c.status==='pending'&&c.mine});
+  app.innerHTML='<div class="pg"><div class="me"><b>'+E(me.name)+'</b><span>'+E(me.contact)+' · '+E(me.addr)+'</span><div class="me__g"><div>发货仓<b>'+H.br(me.branch).name+'</b></div><div>拿货价<b>'+(me.disc<1?(me.disc*100).toFixed(0).replace(/0$/,'')+' 折':'标准价')+'</b></div><div>近 30 天<b>'+M(month.reduce(function(s,o){return s+o.total},0))+'</b></div></div></div>'+
+   '<div class="box"><a class="li" href="#/me/msg"><span>活动消息 <small>'+db.notices.length+' 条</small></span><span class="go">›</span></a><div class="li"><span>专属业务员</span><small>'+E(H.staff(me.sales).name)+' · 有事直接找他</small></div><a class="li" href="../admin/" target="_blank" rel="noopener"><span>打开后台看看 <small>新开一页，两边一起点</small></span><span class="go">›</span></a></div>'+
+   '<div class="box"><h3>换个演示客户看看</h3><p class="hint" style="margin:-4px 0 10px">不同仓的客户看到的商品和价格不一样</p><div class="cs">'+ok.map(function(c){return '<button data-c="'+c.id+'" class="'+(c.id===me.id?'on':'')+'">'+E(c.name)+'<small>'+H.br(c.branch).name+(c.disc<1?' · '+(c.disc*100).toFixed(0).replace(/0$/,'')+'折':'')+'</small></button>'}).join('')+'</div></div>'+
+   (pend.length?'<div class="box"><h3>你注册的新店</h3>'+pend.map(function(c){return '<div class="li"><span>'+E(c.name)+'</span><small style="color:var(--hot)">等后台审核</small></div>'}).join('')+'</div>':'')+
+   '<div class="box"><a class="li" href="#/register"><span>注册一个新客户 <small>提交后在后台审核</small></span><span class="go">›</span></a><button class="li" id="rst"><span>重置演示数据</span><span class="go">›</span></button></div></div>';
+  app.querySelectorAll('[data-c]').forEach(function(b){b.onclick=function(){me=H.find(db.customers,b.dataset.c);try{localStorage.setItem(meKey,me.id)}catch(e){}cat='全部';toast('已切到 '+me.name);mePage()}});
+  document.getElementById('rst').onclick=function(){db=H.reset();carts={};me=getMe();toast('演示数据已重置');render()};
+}
+function regPage(){
+  app.innerHTML='<div class="pg"><div class="ttl"><button class="back" onclick="history.back()" aria-label="返回">‹</button>注册成为批发客户</div><div class="box"><p class="hint" style="margin:0 0 12px">填好提交，公司审核通过后分配发货仓和专属业务员，就能看价下单。</p>'+
+   '<label class="f">店名<input id="r1" value="鸿运便利店" autocomplete="off"></label><label class="f">联系人<input id="r2" value="黄老板" autocomplete="off"></label><label class="f">手机号<input id="r3" value="137****5521" autocomplete="off"></label><label class="f">店铺地址<input id="r4" value="杭州市西湖区" autocomplete="off"></label><button class="btn btn--blk" id="rg">提交审核</button></div></div>';
+  document.getElementById('rg').onclick=function(){db=H.load();var id='c'+(db.customers.length+1+Math.floor(Math.random()*900));db.customers.push({id:id,name:val('r1')||'新客户',contact:val('r2'),phone:val('r3'),addr:val('r4'),status:'pending',joined:Date.now(),disc:1,mine:true});H.save(db);
+    app.innerHTML='<div class="pg"><div class="box ok"><i>✓</i><b style="font-size:17px">已提交，等公司审核</b><p class="hint">审核通过前看不到价格、不能下单。<br>可以打开后台「客户审核」，自己点通过试试。</p><div style="display:flex;gap:10px;margin-top:18px"><a class="btn btn--line" style="flex:1;display:grid;place-items:center;text-decoration:none" href="#/me">回到我的</a><a class="btn" style="flex:1;display:grid;place-items:center;text-decoration:none" href="../admin/#/customers" target="_blank" rel="noopener">去后台审核</a></div></div></div>'};
+  function val(i){return document.getElementById(i).value.trim()}
+}
+var seen={};db.orders.forEach(function(o){seen[o.id]=o.status});
+function render(){db=H.load();me=H.find(db.customers,me.id)||getMe();var r=route();window.scrollTo(0,0);
+  ({home:home,cart:cartPage,orders:ordersPage,order:function(){orderPage(r[1])},pay:function(){payPage(r[1])},me:function(){mePage(r[1])},register:regPage}[r[0]]||home)();drawTab()}
+var tt;function toast(t){var el=document.getElementById('toast');el.querySelector('span').textContent=t;el.classList.add('show');clearTimeout(tt);tt=setTimeout(function(){el.classList.remove('show')},2600)}
+H.onChange(function(d){db=d;var msg='';db.orders.forEach(function(o){if(o.cid===me.id&&seen[o.id]&&seen[o.id]!==o.status){msg={pack:'仓库已确认收款，开始备货',ship:'订单已发货，备货照片和物流单号已更新',done:'订单已签收'}[o.status]||msg}seen[o.id]=o.status});
+  var c=H.find(db.customers,me.id);var y=window.scrollY;var r=route();
+  if(r[0]==='order'||r[0]==='orders'||r[0]==='me'||r[0]==='home'){({home:home,orders:ordersPage,order:function(){orderPage(r[1])},me:function(){mePage(r[1])}})[r[0]]();drawTab();window.scrollTo(0,y)}
+  if(msg)toast(msg)});
+window.addEventListener('hashchange',render);
+render();
+})();
+</script>
+</body>
+</html>

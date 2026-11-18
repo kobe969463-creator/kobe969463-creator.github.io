@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>工作流画布 · 门店销售日报</title>
+<meta name="description" content="AI 工作流演示：每天自动读各门店表格、算数、找异常、写结论、出日报推到群里。点运行看它一步步跑。">
+<meta name="theme-color" content="#ffffff">
+<link rel="icon" href="/favicon.png">
+<link rel="stylesheet" href="canvas.css">
+</head>
+<body>
+<header class="bar">
+  <a class="bar__back" href="../" aria-label="回到案例介绍"><svg viewBox="0 0 20 20"><path d="M12.5 4 6.5 10l6 6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+  <span class="bar__mark" aria-hidden="true"><svg viewBox="0 0 20 20"><circle cx="5" cy="5" r="2.4"/><circle cx="15" cy="10" r="2.4"/><circle cx="5" cy="15" r="2.4"/><path d="M7.4 5h2.1c1.6 0 2.5 1 2.8 2.6M7.4 15h2.1c1.6 0 2.5-1 2.8-2.6" fill="none" stroke-width="1.6"/></svg></span>
+  <div class="bar__tabs" role="tablist" aria-label="工作流">
+    <button role="tab" aria-selected="true" data-flow="report">门店销售日报</button>
+    <button role="tab" aria-selected="false" data-flow="invoice">送货单录入</button>
+  </div>
+  <span class="bar__meta" id="meta"></span>
+  <button class="run" id="run" type="button"><svg viewBox="0 0 20 20"><path d="M6 4.2v11.6a.6.6 0 0 0 .9.5l9.3-5.8a.6.6 0 0 0 0-1L6.9 3.7a.6.6 0 0 0-.9.5Z" fill="currentColor"/></svg><span>运行</span></button>
+</header>
+
+<div class="body">
+  <main class="stage" id="stage" aria-label="工作流画布">
+    <div class="world" id="world">
+      <svg class="edges" id="edges" aria-hidden="true"></svg>
+    </div>
+    <div class="zoom" aria-hidden="true"><span>－</span><b id="zoomv">100%</b><span>＋</span></div>
+    <div class="done" id="done" hidden></div>
+  </main>
+
+  <aside class="panel" id="panel" aria-label="运行日志和节点详情">
+    <div class="panel__grab" aria-hidden="true"></div>
+    <div class="panel__tabs" role="tablist">
+      <button role="tab" aria-selected="true" data-tab="log">运行日志</button>
+      <button role="tab" aria-selected="false" data-tab="detail">节点详情</button>
+      <button class="panel__x" type="button" aria-label="关闭" id="px">×</button>
+    </div>
+    <div class="panel__body">
+      <ol class="log" id="log"></ol>
+      <div class="detail" id="detail" hidden></div>
+    </div>
+  </aside>
+</div>
+
+<div class="mbar" id="mbar">
+  <span class="mbar__dot" id="mdot"></span><span class="mbar__txt" id="mtxt">点右上角「运行」，看它一步步跑</span>
+  <button type="button" id="mlog">日志</button>
+</div>
+<div class="scrim" id="scrim" hidden></div>
+
+<script src="data.js"></script>
+<script src="flows.js"></script>
+<script src="canvas.js"></script>
+</body>
+</html>

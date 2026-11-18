@@ -1,0 +1,243 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>AI 工作流案例 · 门店销售日报</title>
+<meta name="description" content="AI 工作流 / 办公自动化案例：每天自动收齐各门店格式不一样的 Excel，清洗合并、算对比、找异常、大模型写结论，出日报推到群里。可以自己点运行试。">
+<meta property="og:title" content="AI 工作流案例 · 每天自动出销售日报">
+<meta property="og:description" content="收表、合并、算数、找异常、写结论、推到群里，每天 08:30 自己跑完。">
+<meta property="og:image" content="poster.jpg">
+<meta name="theme-color" content="#06082f">
+<link rel="icon" href="/favicon.png">
+<style>
+@font-face{font-family:'General Sans';font-weight:500;font-display:swap;src:url(/fonts/general-sans-500.woff2) format('woff2')}
+@font-face{font-family:'General Sans';font-weight:600;font-display:swap;src:url(/fonts/general-sans-600.woff2) format('woff2')}
+:root{
+  --paper:#fff;--ink:#1c1d20;--muted:#5f6368;--line:rgba(28,29,32,.12);
+  --navy:#06082f;--navy-2:#11154a;--on-navy:#f4f4f7;--on-navy-muted:#b4b6cc;
+  --font:'General Sans',-apple-system,BlinkMacSystemFont,'PingFang SC','Hiragino Sans GB','Noto Sans SC','Microsoft YaHei',sans-serif;
+  --ease:cubic-bezier(.16,1,.3,1);--gut:20px;color-scheme:light}
+*,*::before,*::after{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--paper);color:var(--ink);font:16px/1.6 var(--font);-webkit-font-smoothing:antialiased;overflow-x:hidden}
+a{color:inherit;text-decoration:none;-webkit-tap-highlight-color:transparent}
+h1,h2,h3,p,ul,ol,figure{margin:0}ul,ol{padding:0;list-style:none}
+img,video{display:block;max-width:100%}
+:focus-visible{outline:2px solid #3f5cf3;outline-offset:3px;border-radius:6px}
+
+.hero{background:var(--navy);color:var(--on-navy);padding:0 var(--gut) 26px}
+.top{display:flex;align-items:center;justify-content:space-between;height:52px;font-size:14px;max-width:1180px;margin:0 auto}
+.top__brand{font-weight:600;letter-spacing:-.01em}
+.top__brand span{font-weight:500;color:var(--on-navy-muted);margin-left:6px}
+.top__tag{font-size:13px;color:var(--on-navy-muted);padding:4px 10px;border-radius:999px;background:rgba(255,255,255,.1)}
+.hero__grid{display:grid;gap:18px;max-width:1180px;margin:0 auto}
+.hero h1{font-size:28px;line-height:1.2;font-weight:600;letter-spacing:-.02em;padding-top:6px}
+.hero h1 small{display:block;font-size:15px;font-weight:500;letter-spacing:0;color:var(--on-navy-muted);margin-top:6px}
+.hero__side{display:none}
+.win{border-radius:12px;overflow:hidden;background:#fff;box-shadow:0 0 0 1px rgba(255,255,255,.14),0 28px 60px -24px rgba(0,0,0,.8)}
+.win__bar{display:flex;align-items:center;gap:6px;height:26px;padding:0 10px;background:#e9eaee}
+.win__bar i{width:9px;height:9px;border-radius:50%;background:#c9cbd2}
+.win__bar span{flex:1;margin-left:8px;height:15px;border-radius:5px;background:#fff;max-width:280px}
+.win__v{position:relative;aspect-ratio:1280/800;background:#f3f4f7}
+.win video{width:100%;height:100%;object-fit:cover}
+.play{position:absolute;inset:0;margin:auto;width:max-content;height:max-content;padding:10px 18px;border:0;border-radius:999px;
+  background:rgba(6,8,47,.82);color:#fff;font:500 15px/1 var(--font);display:flex;gap:8px;align-items:center;cursor:pointer}
+.play[hidden]{display:none}
+@media (max-width:899px){
+  .win{--h:clamp(360px,calc(100svh - 236px),640px);height:var(--h);width:calc(var(--h) * 390 / 720);margin:0 auto;border-radius:18px;
+    box-shadow:0 0 0 6px #0b0b0d,0 0 0 7.5px #2b2c33,0 28px 60px -24px rgba(0,0,0,.75)}
+  .win__bar{display:none}
+  .win__v{aspect-ratio:auto;height:100%}
+  .hero h1{font-size:24px}.hero h1 small{font-size:14px;margin-top:4px}
+  .hero__grid{gap:16px}
+}
+.hero__note{text-align:center;font-size:13px;color:var(--on-navy-muted);margin-top:10px}
+.cta{position:fixed;left:0;right:0;bottom:0;z-index:10;display:flex;gap:10px;padding:10px var(--gut) calc(10px + env(safe-area-inset-bottom));
+  background:var(--paper);box-shadow:0 -1px 0 var(--line),0 -8px 20px -14px rgba(0,0,0,.28)}
+.btn{flex:1;display:flex;align-items:center;justify-content:center;gap:6px;height:48px;border-radius:999px;font-size:16px;font-weight:500;
+  border:1.5px solid var(--navy);color:var(--navy);transition:background-color .2s,transform .2s var(--ease);white-space:nowrap}
+.btn:active{transform:scale(.97)}
+.btn--main{background:var(--navy);color:#fff;flex:1.2}
+main{padding:32px var(--gut) 120px;max-width:1080px;margin:0 auto}
+.lede{font-size:19px;line-height:1.6;font-weight:500;letter-spacing:-.01em;max-width:26em;text-wrap:pretty}
+.fits{margin-top:14px;color:var(--muted);font-size:15px}
+.fits b{color:var(--ink);font-weight:500}
+section{margin-top:52px}
+h2{font-size:22px;line-height:1.3;font-weight:600;letter-spacing:-.01em;margin-bottom:14px}
+.shots__head{display:flex;align-items:baseline;justify-content:space-between}
+.shots__hint{font-size:14px;color:var(--muted)}
+.strip{display:flex;gap:14px;overflow-x:auto;scroll-snap-type:x mandatory;margin:0 calc(var(--gut) * -1);padding:4px var(--gut) 14px;
+  scroll-padding:0 var(--gut);scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.strip::-webkit-scrollbar{display:none}
+.strip figure{flex:0 0 auto;scroll-snap-align:start;width:min(84vw,520px)}
+.strip figure.tall{width:min(46vw,220px)}
+.strip img{width:100%;height:auto;border-radius:14px;background:#f1f1f3;box-shadow:0 0 0 1px var(--line),0 14px 28px -18px rgba(0,0,0,.3)}
+.strip figure:not(.tall) img{aspect-ratio:1280/800;object-fit:cover;object-position:top left}
+.strip figure.tall img{aspect-ratio:375/700;object-fit:cover;object-position:top}
+.strip figcaption{font-size:14px;line-height:1.5;color:var(--muted);margin-top:10px;padding-right:8px}
+.strip figcaption b{display:block;color:var(--ink);font-weight:500;font-size:15px}
+.prose p{color:#3c3f45;max-width:36em}
+.prose p+p{margin-top:10px}
+.steps{counter-reset:s;max-width:40em}
+.steps li{counter-increment:s;display:grid;grid-template-columns:28px 1fr;gap:2px 12px;padding:12px 0;border-top:1px solid var(--line)}
+.steps li:last-child{border-bottom:1px solid var(--line)}
+.steps li::before{content:counter(s);grid-row:1/3;width:24px;height:24px;border-radius:50%;background:#eef0f6;color:var(--navy);font-size:13px;font-weight:600;display:grid;place-items:center;margin-top:2px}
+.steps b{font-weight:500}
+.steps span{color:var(--muted);font-size:15px}
+.two{display:grid;gap:40px}
+.mini{padding:16px;border-radius:16px;background:#f4f4f6}
+.mini h3{font-size:17px;font-weight:600}
+.mini p{color:var(--muted);font-size:15px;margin-top:6px}
+.mini a{display:inline-flex;margin-top:10px;font-weight:500;color:var(--navy);border-bottom:1.5px solid currentColor;font-size:15px}
+.tags{display:flex;flex-wrap:wrap;gap:8px;margin-top:4px}
+.tags span{font-size:14px;padding:4px 12px;border-radius:999px;background:#f1f2f6;color:#3c3f45}
+.contact{margin-top:56px}
+.contact p.contact__lead{color:var(--muted);font-size:15px;margin-bottom:16px}
+.wx{display:flex;align-items:center;justify-content:space-between;gap:12px;max-width:420px;padding:6px 6px 6px 20px;border:1.5px solid var(--navy);border-radius:999px;font-size:17px;font-weight:500}
+.wx [data-copy-text]{-webkit-user-select:text;user-select:text}
+.wx__btn{flex:none;min-width:5em;height:44px;padding:0 18px;border:0;border-radius:999px;background:var(--navy);color:#fff;font:500 15px/1 var(--font);cursor:pointer;transition:background-color .25s}
+.wx__btn.is-copied{background:#1f8a4c}
+footer{margin-top:56px;padding-top:20px;border-top:1px solid var(--line);font-size:13px;color:var(--muted);display:flex;flex-wrap:wrap;gap:6px 16px;justify-content:space-between}
+footer a{color:var(--ink);font-weight:500}
+@media (prefers-reduced-motion:reduce){.btn{transition:none}}
+@media (min-width:900px){
+  :root{--gut:clamp(24px,5vw,80px)}
+  .hero{padding-bottom:60px}
+  .hero__grid{grid-template-columns:minmax(320px,400px) 1fr;align-items:center;gap:56px;padding-top:28px}
+  .hero h1{font-size:40px}
+  .hero h1 small{font-size:19px;margin-top:10px}
+  .hero__side{display:block}
+  .hero__side .lede{color:var(--on-navy);margin-top:24px;font-size:18px}
+  .hero__side .fits{color:var(--on-navy-muted)}.hero__side .fits b{color:var(--on-navy)}
+  .cta{position:static;background:none;box-shadow:none;padding:0;margin-top:30px}
+  .hero .btn{border-color:var(--on-navy);color:var(--on-navy)}
+  .hero .btn--main{background:var(--on-navy);color:var(--navy)}
+  .intro,.intro-cta{display:none}
+  main{padding-bottom:80px}
+  .two{grid-template-columns:1fr 1fr;gap:56px}
+  .strip{margin:0;padding:4px 0 14px}
+  .strip figure{width:480px}.strip figure.tall{width:200px}
+}
+</style>
+</head>
+<body>
+<header class="hero">
+  <nav class="top" aria-label="案例"><a class="top__brand" href="https://kobe969463-creator.github.io/">Rick<span>的作品</span></a><span class="top__tag">公司活 · AI 工作流</span></nav>
+  <div class="hero__grid">
+    <div>
+      <h1>每天自动出销售日报<small>AI 工作流 · 办公自动化</small></h1>
+      <div class="hero__side">
+        <p class="lede">各门店交上来的 Excel 格式五花八门，它每天早上自己收齐、合并、算对比、找出哪里不对，再写几句话，做成日报推到群里。</p>
+        <p class="fits"><b>适合</b>　连锁门店、多个业务员交表、每天 / 每周要出报表的公司</p>
+        <div class="cta"><a class="btn btn--main" href="demo/">自己点一下试试</a><a class="btn" href="demo/report.html">看生成的日报</a></div>
+      </div>
+    </div>
+    <div>
+      <figure class="win" aria-label="工作流运行录屏">
+        <div class="win__bar" aria-hidden="true"><i></i><i></i><i></i><span></span></div>
+        <div class="win__v">
+          <video id="rec" autoplay muted loop playsinline webkit-playsinline x5-playsinline preload="auto" aria-label="录屏：点运行，节点一个个跑完，出日报"></video>
+          <button class="play" id="play" type="button" hidden><svg viewBox="0 0 20 20" width="14" height="14" aria-hidden="true"><path d="M6 4.2v11.6a.6.6 0 0 0 .9.5l9.3-5.8a.6.6 0 0 0 0-1L6.9 3.7a.6.6 0 0 0-.9.5Z" fill="currentColor"/></svg>播放录屏</button>
+        </div>
+      </figure>
+      <p class="hero__note" id="note">录屏 · 点运行 → 节点一个个跑完 → 出日报</p>
+    </div>
+  </div>
+</header>
+<div class="intro-cta"><div class="cta"><a class="btn btn--main" href="demo/">自己点一下试试</a><a class="btn" href="demo/report.html">看生成的日报</a></div></div>
+<main>
+  <div class="intro"><p class="lede">各门店交上来的 Excel 格式五花八门，它每天早上自己收齐、合并、算对比、找出哪里不对，再写几句话，做成日报推到群里。</p>
+    <p class="fits"><b>适合</b>　连锁门店、多个业务员交表、每天 / 每周要出报表的公司</p></div>
+
+  <section aria-labelledby="h-shots">
+    <div class="shots__head"><h2 id="h-shots">几个关键画面</h2><span class="shots__hint">左右滑 · 5 张</span></div>
+    <div class="strip">
+      <figure><img src="shots/01.webp" alt="工作流画布全貌" width="480" height="300" loading="lazy" decoding="async"><figcaption><b>整条流程在一张画布上</b>每一步做什么写在节点上，有异常和没异常走两条线</figcaption></figure>
+      <figure><img src="shots/02.webp" alt="运行中" width="480" height="300" loading="lazy" decoding="async"><figcaption><b>跑起来一步步亮</b>右边日志写着每一步读了几行、发现了什么</figcaption></figure>
+      <figure><img src="shots/03.webp" alt="大模型节点详情" width="480" height="300" loading="lazy" decoding="async"><figcaption><b>每一步都能点开看</b>大模型拿到了什么、怎么交代它的、写出来什么</figcaption></figure>
+      <figure class="tall"><img src="shots/04.webp" alt="生成的日报" width="200" height="373" loading="lazy" decoding="async"><figcaption><b>手机上看的日报</b>数、结论、异常、图表、明细</figcaption></figure>
+      <figure><img src="shots/05.webp" alt="送货单录入的人工确认" width="480" height="300" loading="lazy" decoding="async"><figcaption><b>对不上的才停下等人</b>另一条：拍送货单进台账，认不清的让采购点一下</figcaption></figure>
+    </div>
+  </section>
+
+  <section class="prose">
+    <h2>什么场景</h2>
+    <p>一家有 6 家门店的烘焙连锁（店名、数据都是编的），每天早上要看前一天卖得怎么样：哪家店好、哪家店差、什么卖空了、要不要调货。</p>
+  </section>
+
+  <section class="prose">
+    <h2>原来怎么干</h2>
+    <p>运营每天 8 点开始在群里收表。6 家店加 2 个业务员，交上来 7 份，列名不一样、有的带合计行、有的是收银机导出的 csv、有的分上午下午两张。复制粘贴、改公式、做图、写几句总结，弄完差不多 10 点。</p>
+    <p>哪家店收银机下午掉线了、哪样东西中午就卖空了，常常要到下午有人问才发现。</p>
+  </section>
+
+  <section>
+    <h2>做了什么</h2>
+    <ol class="steps">
+      <li><b>每天 08:30 自己开始</b><span>去共享文件夹收昨天的表，9 点还没交的在群里 @ 店长</span></li>
+      <li><b>大模型认表头</b><span>「销量」「数量」「实收」「销售额」对到同一个字段，表头在第几行也能认</span></li>
+      <li><b>代码清洗、合并、算数</b><span>去合计行、去重复、单位换算；算营业额、单数、客单价，比前天、比上周同一天</span></li>
+      <li><b>按规则找异常</b><span>掉量超 20%、卖空、退款比平时多一倍、某个小时没流水</span></li>
+      <li><b>大模型写「今天要注意的」</b><span>3～5 句，带数字、说可能的原因和今天该做什么；数字只用算好的，不让它自己编</span></li>
+      <li><b>出日报、推送</b><span>手机上看的网页版 + 长图 + Excel 明细，推到店长群、发邮件给老板和财务</span></li>
+    </ol>
+  </section>
+
+  <section class="two">
+    <div>
+      <h2>能接到哪</h2>
+      <div class="tags"><span>Excel / csv</span><span>在线表格</span><span>收银 / ERP 导出</span><span>共享文件夹</span><span>企业群机器人</span><span>邮件</span><span>你们在用的工作流平台</span><span>自己电脑或服务器上定时跑</span></div>
+      <p class="fits" style="margin-top:14px">数据从哪来、日报发给谁、看哪些数，都按你们公司现在的做法来，不用改大家交表的习惯。</p>
+    </div>
+    <div class="mini">
+      <h3>顺带一个短的：送货单拍照进台账</h3>
+      <p>仓库拍送货单 → 大模型认字 → 代码核数量 × 单价对不对 → 对不上的停下来让采购点一下 → 写进台账 → 跟采购单对账，少到的提醒采购。</p>
+      <a href="demo/?flow=invoice">去画布上跑这条</a>
+    </div>
+  </section>
+
+  <section class="prose">
+    <h2>几天交</h2>
+    <p>这种规模 3 天。先对你们的表和想看的数，再搭流程、定日报长什么样，最后拿你们真实的几天数据跑一遍，对得上再交。交的时候附一份怎么改规则、加门店的说明。</p>
+  </section>
+
+  <section class="contact" aria-labelledby="h-contact"><h2 id="h-contact">想做一个类似的</h2>
+    <p class="contact__lead">加微信，说说你们现在每天 / 每周手工在弄的是什么，按你们的流程来搭。</p>
+    <p class="wx"><span data-copy-text>微信：<span translate="no">business_rick</span></span><button class="wx__btn" type="button" data-copy="business_rick" aria-label="复制微信号 business_rick">复制</button></p>
+  </section>
+  <footer><span>Rick · 独立开发者</span><a href="https://kobe969463-creator.github.io/">看网站、App 等其他作品 →</a></footer>
+</main>
+<script>
+(function(){
+  var v=document.getElementById('rec'),b=document.getElementById('play');
+  // 手机上放竖版录屏（画布改成竖排节点），电脑上放横版画布
+  var m=window.matchMedia&&matchMedia('(max-width:899px)').matches;
+  v.poster=m?'poster-m.jpg':'poster.jpg';v.src=m?'rec-m.mp4':'rec.mp4';
+  var reduce=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
+  function show(){b.hidden=false}
+  function go(){var p=v.play();if(p&&p.catch)p.catch(show)}
+  v.addEventListener('playing',function(){b.hidden=true});
+  v.addEventListener('loadedmetadata',function(){if(v.duration)document.getElementById('note').textContent='录屏 '+Math.round(v.duration)+' 秒 · 点运行 → 节点一个个跑完 → 出日报'});
+  b.addEventListener('click',function(){b.hidden=true;v.play()});
+  if(reduce){v.removeAttribute('autoplay');show();return}
+  go();
+  document.addEventListener('WeixinJSBridgeReady',go,false);
+  document.addEventListener('touchstart',function t(){if(v.paused)go();document.removeEventListener('touchstart',t)},{passive:true});
+  setTimeout(function(){if(v.paused)show()},2500);
+})();
+(function(){
+  function legacy(t){var a=document.createElement('textarea');a.value=t;a.setAttribute('readonly','');
+    a.style.cssText='position:fixed;top:0;left:0;width:1px;height:1px;opacity:0;font-size:16px';document.body.appendChild(a);
+    a.focus();a.select();a.setSelectionRange(0,t.length);var ok=false;try{ok=document.execCommand('copy')}catch(e){}a.remove();return ok}
+  function copy(t){if(navigator.clipboard&&window.isSecureContext){return navigator.clipboard.writeText(t).then(function(){return true},function(){return legacy(t)})}
+    return Promise.resolve(legacy(t))}
+  document.addEventListener('click',function(e){var b=e.target.closest&&e.target.closest('[data-copy]');if(!b)return;e.preventDefault();
+    copy(b.getAttribute('data-copy')).then(function(ok){
+      if(!ok){var n=b.parentNode.querySelector('[translate]');if(n){var r=document.createRange();r.selectNodeContents(n);var s=getSelection();s.removeAllRanges();s.addRange(r)}}
+      b.textContent=ok?'已复制':'长按选中复制';b.classList.toggle('is-copied',ok);clearTimeout(b._t);
+      b._t=setTimeout(function(){b.textContent='复制';b.classList.remove('is-copied')},2000)})})
+})();
+</script>
+</body>
+</html>
