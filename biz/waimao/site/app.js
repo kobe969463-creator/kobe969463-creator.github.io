@@ -65,7 +65,7 @@ function footer(){
   return '<footer class="ft"><div class="wrap"><div class="ft__g">' +
     '<div><a class="logo" href="#/">' + LOGO + '<span><b>SELVANE</b><small>OUTDOOR LIVING</small></span></a><p>' + t('footAbout') + '</p></div>' +
     '<div><h4>' + t('footLinks') + '</h4><ul><li><a href="#/products?cat=furniture">' + t('cat_furniture') + '</a></li><li><a href="#/products?cat=lighting">' + t('cat_lighting') + '</a></li><li><a href="#/products?cat=pet">' + t('cat_pet') + '</a></li><li><a href="#/factory">' + t('nav_factory') + '</a></li><li><a href="#/inquiry">' + t('nav_contact') + '</a></li></ul></div>' +
-    '<div><h4>' + t('footContact') + '</h4><ul class="contact"><li>' + I.pin + '<span>' + t('footAddr') + '</span></li><li>' + I.mail + '<span>sales@selvane-outdoor.com</span></li><li>' + I.phone + '<span>+86 574 8800 6620 (WhatsApp)</span></li><li>' + I.clock + '<span>' + t('footHours') + '</span></li></ul></div>' +
+    '<div><h4>' + t('footContact') + '</h4><ul class="contact"><li>' + I.pin + '<span>' + t('footAddr') + '</span></li><li>' + I.mail + '<span>sales@selvane.example</span></li><li>' + I.phone + '<span>+86 574 8800 6620 (WhatsApp)</span></li><li>' + I.clock + '<span>' + t('footHours') + '</span></li></ul></div>' +
     '</div><div class="ft__b"><span>© 2026 Selvane Outdoor · ' + t('footNote') + '</span><span>' + t('demoStrip') + '</span></div></div></footer>';
 }
 
@@ -258,7 +258,7 @@ function inquiry(params){
   if (params.cart) S.cart.forEach(function(l){ var s = byId(l.id).sku; if (S.inq.products.indexOf(s) < 0) S.inq.products.push(s); });
   if (params.cart && !S.inq.message) S.inq.message = S.cart.map(function(l){ var p = byId(l.id); return p.sku + ' · ' + cname(l.color) + ' × ' + l.qty + ' ' + unit(p); }).join('\n');
   var side = '<div class="inq__side"><div class="box"><h3>' + t('inqWhat') + '</h3><ul class="ticks">' + [1, 2, 3, 4].map(function(i){ return '<li>' + I.check + '<span>' + t('inqW' + i) + '</span></li>'; }).join('') + '</ul></div>' +
-    '<div class="box"><h3>' + t('inqOr') + '</h3><ul class="contact"><li>' + I.mail + '<span>sales@selvane-outdoor.com</span></li><li>' + I.phone + '<span>+86 574 8800 6620 (WhatsApp)</span></li><li>' + I.clock + '<span>' + t('footHours') + '</span></li><li>' + I.pin + '<span>' + t('footAddr') + '</span></li></ul></div></div>';
+    '<div class="box"><h3>' + t('inqOr') + '</h3><ul class="contact"><li>' + I.mail + '<span>sales@selvane.example</span></li><li>' + I.phone + '<span>+86 574 8800 6620 (WhatsApp)</span></li><li>' + I.clock + '<span>' + t('footHours') + '</span></li><li>' + I.pin + '<span>' + t('footAddr') + '</span></li></ul></div></div>';
   var main;
   if (S.inqDone) {
     var d = S.inqDone;
