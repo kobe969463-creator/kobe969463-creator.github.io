@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>电商批量工具 · 多店铺上架 / 订单对账</title>
+<meta name="description" content="电商店主自己用的批量工具演示：一张表批量上架到淘宝、拼多多、抖店几个店铺；几个平台导出的订单表自动认列名、合并去重、跟结算流水和快递表对账，找出对不上的。">
+<meta name="theme-color" content="#ffffff">
+<link rel="icon" href="/favicon.png">
+<link rel="stylesheet" href="app.css">
+</head>
+<body>
+<header class="bar">
+  <a class="bar__back" href="../" aria-label="回到案例介绍"><svg viewBox="0 0 20 20"><path d="M12.5 4 6.5 10l6 6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+  <span class="bar__mark" aria-hidden="true"><svg viewBox="0 0 20 20"><rect x="3" y="3" width="6" height="6" rx="1.5"/><rect x="11" y="3" width="6" height="6" rx="1.5"/><rect x="3" y="11" width="6" height="6" rx="1.5"/><rect x="11" y="11" width="6" height="6" rx="1.5" opacity=".45"/></svg></span>
+  <div class="bar__tabs" role="tablist" aria-label="工具">
+    <button role="tab" aria-selected="true" data-tool="list">批量上架</button>
+    <button role="tab" aria-selected="false" data-tool="recon">订单对账</button>
+  </div>
+  <span class="bar__meta" id="meta"></span>
+  <button class="run" id="run" type="button"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M6 4.2v11.6a.6.6 0 0 0 .9.5l9.3-5.8a.6.6 0 0 0 0-1L6.9 3.7a.6.6 0 0 0-.9.5Z" fill="currentColor"/></svg><span>开始</span></button>
+</header>
+
+<!-- 工具一：多店铺批量上架 -->
+<section class="tool" id="t-list" data-view="goods">
+  <div class="work">
+    <div class="work__head">
+      <div class="seg" role="tablist" aria-label="视图">
+        <button data-view="goods" aria-selected="true">商品表 <em id="l-cnt">48</em></button>
+        <button data-view="log" class="m-only" aria-selected="false">进度日志</button>
+        <button data-view="result" aria-selected="false">上架结果 <em id="l-rcnt"></em></button>
+      </div>
+    </div>
+    <div class="work__body v-goods">
+      <div class="rules" aria-label="上架规则">
+        <span class="rules__t">遇到问题自动处理</span>
+        <label class="sw"><input type="checkbox" data-rule="trunc" checked><i></i>标题超长自动截断</label>
+        <label class="sw"><input type="checkbox" data-rule="crop" checked><i></i>主图不是正方形自动裁</label>
+        <label class="sw"><input type="checkbox" data-rule="words" checked><i></i>广告法禁用词自动换</label>
+        <label class="sw"><input type="checkbox" data-rule="update" checked><i></i>店里已有的改成更新</label>
+      </div>
+      <div class="tools">
+        <label class="search"><svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="9" cy="9" r="5.5" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="m13.2 13.2 3.3 3.3" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg><input id="l-q" type="search" placeholder="搜商品名 / 编码 / 类目" aria-label="搜商品"></label>
+        <span class="tools__sum" id="l-sum"></span>
+        <button class="ghost" id="l-import" type="button">导入表格</button>
+      </div>
+      <div class="tbox"><table class="grid" id="l-goods"></table></div>
+    </div>
+    <div class="work__body v-result">
+      <div class="stats" id="l-stats"></div>
+      <div class="tools">
+        <div class="chips" id="l-filter"></div>
+        <span class="sp"></span>
+        <button class="ghost" id="l-rerun" type="button">重跑没上成的</button>
+        <button class="ghost ghost--dark" id="l-export" type="button">导出 csv</button>
+      </div>
+      <div class="tbox"><table class="grid cards" id="l-result"></table></div>
+    </div>
+  </div>
+  <aside class="panel" aria-label="上架进度和日志">
+    <div class="prog">
+      <div class="prog__top"><b id="l-ptitle">准备上架</b><span id="l-pnum"></span></div>
+      <div class="bar3" aria-hidden="true"><i class="ok" id="l-b-ok"></i><i class="warn" id="l-b-warn"></i><i class="fail" id="l-b-fail"></i></div>
+      <div class="prog__legend"><span><i class="d ok"></i>成功 <b id="l-n-ok">0</b></span><span><i class="d warn"></i>自动处理后成功 <b id="l-n-warn">0</b></span><span><i class="d fail"></i>没上成 <b id="l-n-fail">0</b></span></div>
+      <div class="shoprow" id="l-shoprow"></div>
+    </div>
+    <ol class="log" id="l-log"></ol>
+  </aside>
+</section>
+
+<!-- 工具二：订单表格自动对账 -->
+<section class="tool" id="t-recon" data-view="files" hidden>
+  <div class="work">
+    <div class="work__head">
+      <div class="seg" role="tablist" aria-label="视图">
+        <button data-view="files" aria-selected="true">原始表 <em>6</em></button>
+        <button data-view="map" aria-selected="false">认列名</button>
+        <button data-view="log" class="m-only" aria-selected="false">进度</button>
+        <button data-view="sum" aria-selected="false">汇总表</button>
+        <button data-view="bad" aria-selected="false">异常 <em id="r-bcnt"></em></button>
+      </div>
+    </div>
+    <div class="work__body v-files">
+      <p class="hint">几个平台导出来的表，列名各叫各的：同样是「钱」，淘宝叫<b>买家实际支付金额</b>，拼多多叫<b>商家实收金额(元)</b>，抖店叫<b>订单应付金额</b>。点卡片看原表。</p>
+      <div class="files" id="r-files"></div>
+    </div>
+    <div class="work__body v-map">
+      <div class="empty" id="r-map-empty"><p>点「开始」后，这里显示每张表的列对到了哪个统一字段</p><button class="ghost ghost--dark" type="button" data-start>开始对账</button></div>
+      <div class="tbox tbox--auto" id="r-map-box" hidden><table class="grid map" id="r-map"></table></div>
+      <ul class="notes" id="r-map-notes" hidden></ul>
+    </div>
+    <div class="work__body v-sum">
+      <div class="empty" id="r-sum-empty"><p>跑完出一张按平台的汇总，和合并好的订单明细</p><button class="ghost ghost--dark" type="button" data-start>开始对账</button></div>
+      <div id="r-sum-wrap" hidden>
+        <div class="tools"><b class="tools__h">按平台汇总</b><span class="sp"></span><button class="ghost ghost--dark" id="r-export-sum" type="button">导出整理好的明细 csv</button></div>
+        <div class="tbox tbox--auto"><table class="grid sumt" id="r-sum"></table></div>
+        <div class="tools"><b class="tools__h">合并好的订单明细</b><span class="tools__sum" id="r-ocnt"></span><span class="sp"></span><div class="chips" id="r-ofilter"></div></div>
+        <div class="tbox tbox--orders"><table class="grid" id="r-orders"></table></div>
+      </div>
+    </div>
+    <div class="work__body v-bad">
+      <div class="empty" id="r-bad-empty"><p>跑完把对不上的单子列在这里：少收款、重复发货、退款没入账……</p><button class="ghost ghost--dark" type="button" data-start>开始对账</button></div>
+      <div id="r-bad-wrap" hidden>
+        <div class="tools"><div class="chips" id="r-bfilter"></div><span class="sp"></span><button class="ghost ghost--dark" id="r-export-bad" type="button">导出异常清单 csv</button></div>
+        <div class="tbox"><table class="grid cards" id="r-bad"></table></div>
+      </div>
+    </div>
+  </div>
+  <aside class="panel" aria-label="对账步骤和日志">
+    <div class="prog">
+      <div class="prog__top"><b id="r-ptitle">准备对账</b><span id="r-pnum"></span></div>
+      <div class="bar3" aria-hidden="true"><i class="ok" id="r-bar"></i></div>
+      <ol class="steps" id="r-steps"></ol>
+    </div>
+    <ol class="log" id="r-log"></ol>
+  </aside>
+</section>
+
+<div class="modal" id="modal" hidden role="dialog" aria-modal="true" aria-labelledby="m-title">
+  <div class="modal__box">
+    <div class="modal__head"><b id="m-title"></b><button type="button" class="modal__x" id="m-x" aria-label="关闭">×</button></div>
+    <div class="modal__body" id="m-body"></div>
+  </div>
+</div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script src="data.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
