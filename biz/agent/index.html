@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>智能体案例 · 点开就能试</title>
+<meta name="description" content="四个智能体案例：短视频批量混剪和多号排程、商家智能客服、种草图文批量生成、数据整理自动日报。手机电脑都能直接点着试。">
+<meta property="og:title" content="智能体案例 · 点开就能试">
+<meta property="og:description" content="混剪发布、智能客服、图文批量生成、自动日报，四个都能自己点着试。">
+<meta property="og:image" content="hunjian.jpg">
+<meta name="theme-color" content="#06082f">
+<link rel="icon" href="/favicon.png">
+<style>
+@font-face{font-family:'General Sans';font-weight:500;font-display:swap;src:url(/fonts/general-sans-500.woff2) format('woff2')}
+@font-face{font-family:'General Sans';font-weight:600;font-display:swap;src:url(/fonts/general-sans-600.woff2) format('woff2')}
+:root{
+  --paper:#fff;--ink:#1c1d20;--muted:#5f6368;--line:rgba(28,29,32,.12);
+  --navy:#06082f;--on-navy:#f4f4f7;--on-navy-muted:#b4b6cc;
+  --font:'General Sans',-apple-system,BlinkMacSystemFont,'PingFang SC','Hiragino Sans GB','Noto Sans SC','Microsoft YaHei',sans-serif;
+  --gut:20px;color-scheme:light}
+*,*::before,*::after{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--paper);color:var(--ink);font:16px/1.6 var(--font);-webkit-font-smoothing:antialiased;overflow-x:hidden}
+a{color:inherit;text-decoration:none;-webkit-tap-highlight-color:transparent}
+h1,h2,p,ul{margin:0}ul{padding:0;list-style:none}
+img{display:block;max-width:100%}
+:focus-visible{outline:2px solid #3f5cf3;outline-offset:3px;border-radius:6px}
+.hero{background:var(--navy);color:var(--on-navy);padding:0 var(--gut) 40px}
+.top{display:flex;align-items:center;justify-content:space-between;height:52px;font-size:14px;max-width:1180px;margin:0 auto}
+.top a{color:var(--on-navy-muted)}.top a:hover{color:var(--on-navy)}
+.hero__in{max-width:1180px;margin:0 auto;padding-top:28px}
+h1{font-size:clamp(28px,5vw,44px);font-weight:600;line-height:1.2;letter-spacing:-.01em}
+.lead{margin-top:12px;color:var(--on-navy-muted);max-width:640px}
+.list{max-width:1180px;margin:0 auto;padding:32px var(--gut) 56px;display:grid;gap:28px;grid-template-columns:1fr}
+@media(min-width:760px){.list{grid-template-columns:1fr 1fr;gap:36px 28px}}
+.card{display:block;border:1px solid var(--line);border-radius:14px;overflow:hidden;transition:transform .3s,box-shadow .3s}
+.card:hover{transform:translateY(-3px);box-shadow:0 14px 36px rgba(6,8,47,.12)}
+.card__img{aspect-ratio:16/10;background:#eef0f5;overflow:hidden}
+.card__img img{width:100%;height:100%;object-fit:cover;object-position:top left}
+.card__body{padding:18px 18px 20px}
+.card__no{font-size:13px;color:var(--muted)}
+.card h2{font-size:20px;font-weight:600;margin-top:2px}
+.card p{margin-top:6px;color:var(--muted);font-size:15px}
+.card__go{display:inline-block;margin-top:14px;font-size:14px;font-weight:600;color:var(--navy);border-bottom:1px solid currentColor}
+.foot{max-width:1180px;margin:0 auto;padding:0 var(--gut) 40px;color:var(--muted);font-size:14px}
+</style>
+</head>
+<body>
+<header class="hero">
+  <div class="top"><a href="/">Rick · 独立开发者</a><a href="/work/">更多作品</a></div>
+  <div class="hero__in">
+    <h1>智能体案例</h1>
+    <p class="lead">把每天重复的活交给它：剪视频、回客人、写笔记、出日报。四个都能直接点着试，手机电脑都行。</p>
+  </div>
+</header>
+<main>
+  <ul class="list">
+    <li><a class="card" href="hunjian/">
+      <div class="card__img"><img src="hunjian.jpg" alt="混剪工作台的成片库" width="960" height="600" loading="lazy"></div>
+      <div class="card__body"><span class="card__no">01</span><h2>短视频批量混剪 + 多号排程</h2>
+      <p>素材丢进去，一次出十条不重样的成片，加字幕和配乐，再排到几个账号错开时间发。</p><span class="card__go">点开试试</span></div></a></li>
+    <li><a class="card" href="kefu/">
+      <div class="card__img"><img src="kefu.jpg" alt="智能客服聊天窗口" width="960" height="600" loading="lazy"></div>
+      <div class="card__body"><span class="card__no">02</span><h2>商家智能客服</h2>
+      <p>照着店里的资料回客人的价格、时间、退订问题，答不了的转给你，后台列出来。</p><span class="card__go">点开试试</span></div></a></li>
+    <li><a class="card" href="zhongcao/">
+      <div class="card__img"><img src="zhongcao.jpg" alt="图文工坊生成的笔记和封面" width="960" height="600" loading="lazy"></div>
+      <div class="card__body"><span class="card__no">03</span><h2>种草图文批量生成</h2>
+      <p>填商品和卖点，一次出几篇不同角度的笔记：标题、正文、标签、封面，导出成表格。</p><span class="card__go">点开试试</span></div></a></li>
+    <li><a class="card" href="ribao/">
+      <div class="card__img"><img src="ribao.jpg" alt="自动生成的销售日报" width="960" height="600" loading="lazy"></div>
+      <div class="card__body"><span class="card__no">04</span><h2>数据整理 + 自动日报</h2>
+      <p>几家店格式不一样的表格和截图，自动清洗汇总成带图表的日报，每天定时推到群里。</p><span class="card__go">点开试试</span></div></a></li>
+  </ul>
+</main>
+<footer class="foot">都可以按你的业务改：换成你的素材、你的资料、你的表格。</footer>
+</body>
+</html>

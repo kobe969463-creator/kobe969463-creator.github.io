@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><title>溪畔小住 · 智能客服</title>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%231f8a63'/%3E%3Cpath d='M7 21c3-1 6-4 9-4s6 3 9 4M10 14l6-7 6 7' stroke='white' stroke-width='2.4' fill='none' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="./style.css"></head>
+<body>
+<div class="mtabs" id="mtabs"><button data-p="chat" class="on">顾客咨询</button><button data-p="admin">店家后台<em id="tabBadge"></em></button></div>
+<section class="admin">
+  <header>
+    <div class="brand"><span class="logo"><svg viewBox="0 0 24 24"><path d="M4 18c3-1 5-4 8-4s5 3 8 4M7 11l5-6 5 6"/></svg></span>
+      <div><b>溪畔小住</b><small>智能客服后台</small></div></div>
+    <span class="live"><i></i>接待中</span>
+  </header>
+  <div class="stats">
+    <div><small>今日咨询</small><b id="stAsk">0</b></div>
+    <div><small>自动回复</small><b id="stAuto">0</b></div>
+    <div><small>转人工</small><b id="stHand" class="warn">0</b></div>
+    <div><small>自动解决率</small><b id="stRate">—</b></div>
+  </div>
+  <div class="cols">
+    <div class="card kb">
+      <div class="card-h"><b>知识库</b><span class="muted" id="kbMeta">还没有资料</span></div>
+      <label class="drop" id="drop">
+        <input type="file" id="file" accept=".md,.txt,text/plain,text/markdown" hidden>
+        <svg viewBox="0 0 24 24"><path d="M12 16V4M7 9l5-5 5 5M4 16v3a1 1 0 001 1h14a1 1 0 001-1v-3"/></svg>
+        <span><b>上传店铺资料</b><small>房型价格、入住规则、退订政策… 文本或 Markdown</small></span>
+      </label>
+      <div class="doc" id="doc" hidden></div>
+      <div class="chunks" id="chunks"></div>
+    </div>
+    <div class="card hand">
+      <div class="card-h"><b>待人工处理</b><span class="badge" id="handN">0</span></div>
+      <ul id="hands"><li class="empty"><svg viewBox="0 0 24 24"><path d="M5 12l4 4 10-10"/></svg>暂时没有要你处理的</li></ul>
+    </div>
+  </div>
+</section>
+
+<section class="phone-wrap">
+  <div class="phone">
+    <div class="ph-top"><span>9:41</span><span class="ph-ic">●●● ◔</span></div>
+    <div class="ph-h"><span class="back">‹</span><div><b>溪畔小住</b><small id="phSub">在线 · 通常秒回</small></div><span class="more">···</span></div>
+    <div class="msgs" id="msgs">
+      <div class="intro"><div class="ib"><span class="lg">溪</span><div><b>溪畔小住</b><small>山里溪边的小民宿 · 5 间房 · 带院子和茶室</small></div></div>
+        <div class="ft">大家都在问</div>
+        <ul class="faq" id="faq"><li>周末两个人住多少钱</li><li>几点入住，几点退房</li><li>临时去不了，定金能退吗</li><li>可以带狗吗</li><li>从高铁站怎么过去</li></ul></div>
+      <div class="time">今天</div>
+      <div class="m bot"><span class="av">溪</span><div class="bub">你好，这里是溪畔小住。房型、价格、入住退房、退订这些都可以直接问我。</div></div>
+    </div>
+    <div class="quick" id="quick"><span>房间多少钱</span><span>几点入住</span><span>怎么退订</span><span>能带狗吗</span><span>有停车位吗</span><span>从高铁站怎么过去</span><span>连住三晚能便宜点吗</span><span>有会员卡吗</span></div>
+    <form class="ph-in" id="form"><input id="inp" placeholder="输入你的问题" autocomplete="off" enterkeyhint="send"><button aria-label="发送"><svg viewBox="0 0 24 24"><path d="M4 12l16-8-6 16-2-7z"/></svg></button></form>
+  </div>
+</section>
+<script src="./doc.js"></script>
+<script src="./qa.js"></script>
+<script src="./app.js"></script>
+</body></html>
